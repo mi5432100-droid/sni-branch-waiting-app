@@ -27,7 +27,7 @@ body {
 .app {
   max-width: 420px;
   margin: 0 auto;
-  min-height: 100vh;
+  min-height: 100%;
   background:
     radial-gradient(circle at 50% 0%, rgba(201, 162, 75, 0.08), transparent 55%),
     var(--bg);
@@ -413,6 +413,12 @@ body {
    Mode switch (shared chrome between the waiting app and dashboard)
    =================================================================== */
 
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .mode-switch {
   display: flex;
   gap: 4px;
@@ -422,6 +428,12 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex: 0 0 auto;
+}
+
+.view-waiting,
+.view-dashboard {
+  flex: 1 1 auto;
 }
 
 .mode-tab {
@@ -458,7 +470,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  min-height: 100vh;
+  min-height: 100%;
   background:
     radial-gradient(circle at 50% 0%, rgba(201, 162, 75, 0.06), transparent 60%),
     var(--bg);
@@ -497,6 +509,30 @@ body {
   z-index: 1;
 }
 
+.stage-building {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.stage-building svg {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1100px, 96vw);
+  height: auto;
+  opacity: 0.34;
+  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 55%, transparent 100%);
+}
+
+@media (min-width: 1080px) {
+  .stage-building { display: block; }
+}
+
 /* ===================================================================
    Investment dashboard — DESIGN.md ("Dell Dec-1996") reproduction
    Namespaced with a d96- prefix so it never collides with the
@@ -505,7 +541,7 @@ body {
 
 .view-dashboard {
   background: #efeee9;
-  min-height: 100vh;
+  min-height: 100%;
   padding: 24px 16px 48px;
 }
 
