@@ -100,6 +100,43 @@ body {
   letter-spacing: 0.02em;
 }
 
+.hero-pb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.hero-pb-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.15);
+}
+
+.hero-pb-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-pb-role {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.hero-pb-name {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-primary);
+  font-weight: 600;
+}
+
 .screen { padding: 20px 24px 20px; }
 .screen.hidden { display: none; }
 
@@ -459,9 +496,14 @@ body {
   display: none;
 }
 
+#view-waiting {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ===================================================================
    Stage — widens the waiting app into a full-bleed backdrop on
-   desktop. Whitespace + ambient glow only, no illustration.
+   desktop, using a real branch-interior photo dimmed for legibility.
    =================================================================== */
 
 .stage {
@@ -470,67 +512,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  min-height: 100%;
+  flex: 1 1 auto;
   background:
-    radial-gradient(circle at 50% 0%, rgba(201, 162, 75, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(10, 11, 14, 0.74), rgba(10, 11, 14, 0.9)),
+    url("branch-interior.jpg") center center / cover no-repeat,
     var(--bg);
-}
-
-.stage::before,
-.stage::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(110px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.stage::before {
-  width: 460px;
-  height: 460px;
-  top: -160px;
-  left: -140px;
-  background: radial-gradient(circle, rgba(201, 162, 75, 0.5), transparent 70%);
-  opacity: 0.55;
-}
-
-.stage::after {
-  width: 520px;
-  height: 520px;
-  bottom: -200px;
-  right: -160px;
-  background: radial-gradient(circle, rgba(230, 205, 138, 0.4), transparent 70%);
-  opacity: 0.4;
 }
 
 .stage > .app {
   position: relative;
   z-index: 1;
-}
-
-.stage-building {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.stage-building svg {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(1100px, 96vw);
-  height: auto;
-  opacity: 0.34;
-  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 55%, transparent 100%);
-}
-
-@media (min-width: 1080px) {
-  .stage-building { display: block; }
 }
 
 /* ===================================================================
