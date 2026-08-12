@@ -361,60 +361,14 @@
   prepMemoEl.addEventListener("blur", saveMemo);
 
   // ===================================================================
-  // Investment dashboard (관심종목 / 메모 / 체크리스트)
-  // 관심종목만 Supabase에 저장하고, 메모/체크리스트는 계속 localStorage를 쓴다.
+  // Investment dashboard (투자자 성향 / 자산 구조)
+  // 현재는 정적 샘플 데이터만 표시하는 화면이라 별도 저장 로직이 없다.
   // ===================================================================
-
-  var SUPABASE_URL = "https://yeqsiohpontbridkbjnw.supabase.co";
-  var SUPABASE_ANON_KEY = "sb_publishable_lEVTyrJyhgObJseMXj5wrg_CaGrn9uQ";
-  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  var DASH_KEYS = {
-    notes: "d96_notes",
-    checklist: "d96_checklist"
-  };
 
   var tabWaiting = document.getElementById("tab-waiting");
   var tabDashboard = document.getElementById("tab-dashboard");
   var viewWaiting = document.getElementById("view-waiting");
   var viewDashboard = document.getElementById("view-dashboard");
-
-  var watchlistForm = document.getElementById("watchlist-form");
-  var watchlistNameInput = document.getElementById("watchlist-name-input");
-  var watchlistMemoInput = document.getElementById("watchlist-memo-input");
-  var watchlistListEl = document.getElementById("watchlist-list");
-  var watchlistEmptyEl = document.getElementById("watchlist-empty");
-
-  var noteForm = document.getElementById("note-form");
-  var noteInput = document.getElementById("note-input");
-  var noteListEl = document.getElementById("note-list");
-  var noteEmptyEl = document.getElementById("note-empty");
-
-  var checklistForm = document.getElementById("checklist-form");
-  var checklistInput = document.getElementById("checklist-input");
-  var checklistListEl = document.getElementById("checklist-list");
-  var checklistEmptyEl = document.getElementById("checklist-empty");
-
-  function loadList(key) {
-    var raw = localStorage.getItem(key);
-    if (!raw) return [];
-    try {
-      var parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function saveList(key, list) {
-    localStorage.setItem(key, JSON.stringify(list));
-  }
-
-  function nextId(list) {
-    var max = 0;
-    list.forEach(function (item) { if (item.id > max) max = item.id; });
-    return max + 1;
-  }
 
   function switchMode(mode) {
     var toWaiting = mode === "waiting";
@@ -424,196 +378,8 @@
     tabDashboard.classList.toggle("active", !toWaiting);
   }
 
-  // ---- 관심종목 (Supabase) ----
-
-  function renderWatchlistRows(items) {
-    watchlistListEl.innerHTML = "";
-    watchlistEmptyEl.classList.toggle("hidden", items.length > 0);
-
-    items.forEach(function (item) {
-      var li = document.createElement("li");
-
-      var main = document.createElement("div");
-      main.className = "d96-item-main";
-      var name = document.createElement("span");
-      name.className = "d96-item-name";
-      name.textContent = item.name;
-      main.appendChild(name);
-      if (item.memo) {
-        var memo = document.createElement("span");
-        memo.className = "d96-item-memo";
-        memo.textContent = item.memo;
-        main.appendChild(memo);
-      }
-
-      var removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "d96-item-remove";
-      removeBtn.textContent = "삭제";
-      removeBtn.addEventListener("click", function () {
-        removeBtn.disabled = true;
-        supabaseClient.from("watchlist").delete().eq("id", item.id).then(function (res) {
-          if (res.error) {
-            alert("삭제 실패: " + res.error.message);
-            removeBtn.disabled = false;
-            return;
-          }
-          renderWatchlist();
-        });
-      });
-
-      li.appendChild(main);
-      li.appendChild(removeBtn);
-      watchlistListEl.appendChild(li);
-    });
-  }
-
-  function renderWatchlist() {
-    watchlistEmptyEl.textContent = "불러오는 중...";
-    watchlistEmptyEl.classList.remove("hidden");
-    supabaseClient
-      .from("watchlist")
-      .select("*")
-      .order("created_at", { ascending: true })
-      .then(function (res) {
-        if (res.error) {
-          watchlistEmptyEl.textContent = "관심종목을 불러오지 못했습니다: " + res.error.message;
-          watchlistEmptyEl.classList.remove("hidden");
-          return;
-        }
-        watchlistEmptyEl.textContent = "등록된 관심종목이 없습니다.";
-        renderWatchlistRows(res.data || []);
-      });
-  }
-
-  watchlistForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var name = watchlistNameInput.value.trim();
-    if (!name) return;
-    var submitBtn = watchlistForm.querySelector("button[type=submit]");
-    submitBtn.disabled = true;
-    supabaseClient
-      .from("watchlist")
-      .insert({ name: name, memo: watchlistMemoInput.value.trim() })
-      .then(function (res) {
-        submitBtn.disabled = false;
-        if (res.error) {
-          alert("추가 실패: " + res.error.message);
-          return;
-        }
-        watchlistForm.reset();
-        renderWatchlist();
-      });
-  });
-
-  // ---- 메모 ----
-
-  function renderNotes() {
-    var items = loadList(DASH_KEYS.notes);
-    noteListEl.innerHTML = "";
-    noteEmptyEl.classList.toggle("hidden", items.length > 0);
-
-    items.forEach(function (item) {
-      var li = document.createElement("li");
-
-      var main = document.createElement("div");
-      main.className = "d96-item-main";
-      var text = document.createElement("span");
-      text.className = "d96-item-name";
-      text.textContent = item.text;
-      main.appendChild(text);
-
-      var removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "d96-item-remove";
-      removeBtn.textContent = "삭제";
-      removeBtn.addEventListener("click", function () {
-        saveList(DASH_KEYS.notes, loadList(DASH_KEYS.notes).filter(function (i) {
-          return i.id !== item.id;
-        }));
-        renderNotes();
-      });
-
-      li.appendChild(main);
-      li.appendChild(removeBtn);
-      noteListEl.appendChild(li);
-    });
-  }
-
-  noteForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var text = noteInput.value.trim();
-    if (!text) return;
-    var items = loadList(DASH_KEYS.notes);
-    items.push({ id: nextId(items), text: text });
-    saveList(DASH_KEYS.notes, items);
-    noteForm.reset();
-    renderNotes();
-  });
-
-  // ---- 체크리스트 ----
-
-  function renderChecklist() {
-    var items = loadList(DASH_KEYS.checklist);
-    checklistListEl.innerHTML = "";
-    checklistEmptyEl.classList.toggle("hidden", items.length > 0);
-
-    items.forEach(function (item) {
-      var li = document.createElement("li");
-      li.className = "d96-checklist-item" + (item.done ? " done" : "");
-
-      var label = document.createElement("label");
-      var checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = !!item.done;
-      checkbox.addEventListener("change", function () {
-        var items2 = loadList(DASH_KEYS.checklist);
-        items2.forEach(function (i) { if (i.id === item.id) i.done = checkbox.checked; });
-        saveList(DASH_KEYS.checklist, items2);
-        renderChecklist();
-      });
-      var text = document.createElement("span");
-      text.className = "d96-item-text";
-      text.textContent = item.text;
-      label.appendChild(checkbox);
-      label.appendChild(text);
-
-      var removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "d96-item-remove";
-      removeBtn.textContent = "삭제";
-      removeBtn.addEventListener("click", function () {
-        saveList(DASH_KEYS.checklist, loadList(DASH_KEYS.checklist).filter(function (i) {
-          return i.id !== item.id;
-        }));
-        renderChecklist();
-      });
-
-      li.appendChild(label);
-      li.appendChild(removeBtn);
-      checklistListEl.appendChild(li);
-    });
-  }
-
-  checklistForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var text = checklistInput.value.trim();
-    if (!text) return;
-    var items = loadList(DASH_KEYS.checklist);
-    items.push({ id: nextId(items), text: text, done: false });
-    saveList(DASH_KEYS.checklist, items);
-    checklistForm.reset();
-    renderChecklist();
-  });
-
   tabWaiting.addEventListener("click", function () { switchMode("waiting"); });
   tabDashboard.addEventListener("click", function () { switchMode("dashboard"); });
-
-  function initDashboard() {
-    renderWatchlist();
-    renderNotes();
-    renderChecklist();
-  }
 
   function init() {
     renderBranchList();
@@ -623,7 +389,6 @@
     } else {
       showScreen("branches");
     }
-    initDashboard();
   }
 
   init();

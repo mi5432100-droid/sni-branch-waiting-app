@@ -596,8 +596,13 @@ body {
 .d96-panels {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-items: start;
   gap: 16px;
   padding: 32px 16px 16px;
+}
+
+.d96-panels-2 {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 @media (max-width: 768px) {
@@ -620,7 +625,7 @@ body {
 }
 
 .d96-ribbon-body {
-  padding: 12px 16px;
+  padding: 16px;
   font-size: 14px;
   color: #000000;
 }
@@ -628,46 +633,85 @@ body {
 .d96-tint-sky { background: #9ab6c8; }
 .d96-tint-peach { background: #e6915d; }
 .d96-tint-periwinkle { background: #8c9ae0; }
+.d96-tint-salmon { background: #d77a7a; }
+.d96-tint-lime { background: #c0d4a7; }
+.d96-tint-steel { background: #a5b8c0; }
 
-.d96-form {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+.d96-empty {
+  font-size: 12px;
+  color: #555555;
+  margin: 12px 0 0;
 }
 
-.d96-form input[type="text"],
-.d96-form textarea {
-  width: 100%;
-  background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 0;
-  padding: 4px 6px;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 14px;
+.d96-empty.hidden {
+  display: none;
+}
+
+/* ---- 투자자 성향 ---- */
+
+.d96-profile-label {
+  margin: 0 0 12px;
+  font-family: "Arial Black", Helvetica, system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 22px;
   color: #000000;
 }
 
-.d96-form textarea {
-  min-height: 60px;
-  resize: vertical;
+.d96-scale {
+  display: flex;
+  border: 1px solid #000000;
+  margin-bottom: 14px;
 }
 
-.d96-btn-primary {
-  align-self: flex-start;
-  background: #000000;
-  color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 0;
+.d96-scale span {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  font-size: 11px;
   font-family: Helvetica, Arial, system-ui, sans-serif;
   font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  padding: 6px 16px;
-  cursor: pointer;
+  background: #ffffff;
+  border-right: 1px solid #000000;
 }
 
-.d96-list {
+.d96-scale span:last-child { border-right: none; }
+
+.d96-scale span.active {
+  background: #000000;
+  color: #ffffff;
+}
+
+.d96-profile-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ---- 자산 구조 ---- */
+
+.d96-asset-total {
+  margin: 0 0 14px;
+  font-family: "Arial Black", Helvetica, system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  color: #000000;
+}
+
+.d96-asset-bar {
+  display: flex;
+  height: 22px;
+  border: 1px solid #000000;
+  margin-bottom: 14px;
+}
+
+.d96-asset-bar span {
+  height: 100%;
+  border-right: 1px solid #000000;
+}
+
+.d96-asset-bar span:last-child { border-right: none; }
+
+.d96-asset-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -676,46 +720,26 @@ body {
   gap: 6px;
 }
 
-.d96-list li {
-  background: #ffffff;
-  border: 1px solid #000000;
-  padding: 6px 8px;
+.d96-asset-list li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 6px 10px;
   font-size: 13px;
 }
 
-.d96-item-main { display: flex; flex-direction: column; gap: 2px; }
-.d96-item-name { font-weight: 700; }
-.d96-item-memo { color: #333333; }
-
-.d96-checklist-item { align-items: flex-start; }
-.d96-checklist-item label { display: flex; align-items: center; gap: 8px; }
-.d96-checklist-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #000000; }
-.d96-checklist-item.done .d96-item-text { text-decoration: line-through; color: #555555; }
-
-.d96-item-remove {
-  background: none;
-  border: none;
-  color: #e91d2a;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: Helvetica, Arial, system-ui, sans-serif;
-  font-size: 12px;
-  padding: 0;
+.d96-swatch {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border: 1px solid #000000;
 }
 
-.d96-empty {
-  font-size: 12px;
-  color: #555555;
-  margin: 4px 0 0;
-}
-
-.d96-empty.hidden {
-  display: none;
-}
+.d96-asset-name { font-weight: 700; flex: 1; }
+.d96-asset-pct { font-family: "Times New Roman", Times, serif; }
+.d96-asset-amt { color: #333333; margin-left: auto; }
 
 .d96-footer {
   border-top: 1px solid #000000;
