@@ -496,7 +496,7 @@ body {
   display: none;
 }
 
-#view-waiting {
+.view-waiting {
   display: flex;
   flex-direction: column;
 }

@@ -362,11 +362,14 @@
 
   // ===================================================================
   // Investment dashboard (관심종목 / 메모 / 체크리스트)
-  // Separate localStorage-backed module, independent of the waiting app.
+  // 관심종목만 Supabase에 저장하고, 메모/체크리스트는 계속 localStorage를 쓴다.
   // ===================================================================
 
+  var SUPABASE_URL = "https://yeqsiohpontbridkbjnw.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_lEVTyrJyhgObJseMXj5wrg_CaGrn9uQ";
+  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   var DASH_KEYS = {
-    watchlist: "d96_watchlist",
     notes: "d96_notes",
     checklist: "d96_checklist"
   };
@@ -421,10 +424,9 @@
     tabDashboard.classList.toggle("active", !toWaiting);
   }
 
-  // ---- 관심종목 ----
+  // ---- 관심종목 (Supabase) ----
 
-  function renderWatchlist() {
-    var items = loadList(DASH_KEYS.watchlist);
+  function renderWatchlistRows(items) {
     watchlistListEl.innerHTML = "";
     watchlistEmptyEl.classList.toggle("hidden", items.length > 0);
 
@@ -449,10 +451,15 @@
       removeBtn.className = "d96-item-remove";
       removeBtn.textContent = "삭제";
       removeBtn.addEventListener("click", function () {
-        saveList(DASH_KEYS.watchlist, loadList(DASH_KEYS.watchlist).filter(function (i) {
-          return i.id !== item.id;
-        }));
-        renderWatchlist();
+        removeBtn.disabled = true;
+        supabaseClient.from("watchlist").delete().eq("id", item.id).then(function (res) {
+          if (res.error) {
+            alert("삭제 실패: " + res.error.message);
+            removeBtn.disabled = false;
+            return;
+          }
+          renderWatchlist();
+        });
       });
 
       li.appendChild(main);
@@ -461,15 +468,42 @@
     });
   }
 
+  function renderWatchlist() {
+    watchlistEmptyEl.textContent = "불러오는 중...";
+    watchlistEmptyEl.classList.remove("hidden");
+    supabaseClient
+      .from("watchlist")
+      .select("*")
+      .order("created_at", { ascending: true })
+      .then(function (res) {
+        if (res.error) {
+          watchlistEmptyEl.textContent = "관심종목을 불러오지 못했습니다: " + res.error.message;
+          watchlistEmptyEl.classList.remove("hidden");
+          return;
+        }
+        watchlistEmptyEl.textContent = "등록된 관심종목이 없습니다.";
+        renderWatchlistRows(res.data || []);
+      });
+  }
+
   watchlistForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = watchlistNameInput.value.trim();
     if (!name) return;
-    var items = loadList(DASH_KEYS.watchlist);
-    items.push({ id: nextId(items), name: name, memo: watchlistMemoInput.value.trim() });
-    saveList(DASH_KEYS.watchlist, items);
-    watchlistForm.reset();
-    renderWatchlist();
+    var submitBtn = watchlistForm.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    supabaseClient
+      .from("watchlist")
+      .insert({ name: name, memo: watchlistMemoInput.value.trim() })
+      .then(function (res) {
+        submitBtn.disabled = false;
+        if (res.error) {
+          alert("추가 실패: " + res.error.message);
+          return;
+        }
+        watchlistForm.reset();
+        renderWatchlist();
+      });
   });
 
   // ---- 메모 ----
