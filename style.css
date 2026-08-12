@@ -448,6 +448,64 @@ body {
 }
 
 /* ===================================================================
+   Stage — widens the waiting app on desktop and frames it with
+   ambient "family office / PB team" line-art either side.
+   =================================================================== */
+
+.stage {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 32px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(201, 162, 75, 0.06), transparent 60%),
+    var(--bg);
+}
+
+.stage-decor {
+  display: none;
+  flex: 1 1 0;
+  max-width: 300px;
+  position: relative;
+  padding-top: 80px;
+}
+
+.stage-decor svg {
+  width: 100%;
+  height: 380px;
+  display: block;
+  opacity: 0.55;
+}
+
+.stage-decor-left svg {
+  -webkit-mask-image: linear-gradient(to right, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 45%, transparent 100%);
+}
+
+.stage-decor-right svg {
+  -webkit-mask-image: linear-gradient(to left, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 45%, transparent 100%);
+}
+
+.stage-decor-label {
+  margin: 12px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.75;
+}
+
+.stage-decor-left .stage-decor-label { text-align: left; padding-left: 8px; }
+.stage-decor-right .stage-decor-label { text-align: right; padding-right: 8px; }
+
+@media (min-width: 1080px) {
+  .stage-decor { display: block; }
+}
+
+/* ===================================================================
    Investment dashboard — DESIGN.md ("Dell Dec-1996") reproduction
    Namespaced with a d96- prefix so it never collides with the
    waiting-app's own tokens/classes.
