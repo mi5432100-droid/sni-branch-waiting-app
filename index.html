@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>삼성증권 SNI Center | 지점 방문 웨이팅</title>
+<title>삼성증권 SNI Center | 지점 방문 대기</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app-shell">
   <nav class="mode-switch">
-    <button type="button" class="mode-tab active" id="tab-waiting">웨이팅</button>
+    <button type="button" class="mode-tab active" id="tab-waiting">대기</button>
     <button type="button" class="mode-tab" id="tab-dashboard">투자 대시보드</button>
   </nav>
 
@@ -21,7 +21,7 @@
       <p class="hero-eyebrow">Samsung Securities</p>
       <h1 class="hero-title">SNI Center</h1>
       <div class="hero-rule"></div>
-      <p class="hero-tagline">지점 방문 프라이빗 웨이팅</p>
+      <p class="hero-tagline">지점 방문 프라이빗 대기</p>
       <div class="hero-pb">
         <img src="pb-profile.jpg" alt="전담 PB" class="hero-pb-photo">
         <div class="hero-pb-text">
@@ -33,7 +33,7 @@
   </header>
 
   <main id="screen-branches" class="screen">
-    <p class="screen-desc">지점을 선택하고 미리 웨이팅을 등록하세요.</p>
+    <p class="screen-desc">지점을 선택하고 미리 대기를 등록하세요.</p>
     <ul id="branch-list" class="branch-list"></ul>
   </main>
 
@@ -42,7 +42,7 @@
     <h2 id="register-branch-name"></h2>
     <p class="screen-desc">상담 목적을 선택해주세요.</p>
     <div class="purpose-list" id="purpose-list"></div>
-    <button type="button" class="btn-primary" id="btn-confirm-register" disabled>웨이팅 등록하기</button>
+    <button type="button" class="btn-primary" id="btn-confirm-register" disabled>대기 등록하기</button>
   </main>
 
   <main id="screen-status" class="screen hidden">
@@ -65,7 +65,7 @@
       <button type="button" class="btn-outline" id="btn-go-prep">상담 준비하기</button>
     </div>
 
-    <button type="button" class="btn-secondary" id="btn-cancel-waiting">웨이팅 취소</button>
+    <button type="button" class="btn-secondary" id="btn-cancel-waiting">대기 취소</button>
   </main>
 
   <main id="screen-prep" class="screen hidden">
@@ -127,13 +127,13 @@
         <section class="d96-ribbon">
           <div class="d96-ribbon-title">자산 구조</div>
           <div class="d96-ribbon-body d96-tint-dark">
-            <p class="d96-form-label">보유 자산을 입력해주세요. (단위: 억원)</p>
+            <p class="d96-form-label">보유 자산을 입력해주세요. (단위: 원)</p>
             <form id="asset-form" class="d96-asset-form">
-              <label>국내주식 <input type="number" min="0" step="0.1" id="asset-domestic-stock" placeholder="0"></label>
-              <label>해외주식 <input type="number" min="0" step="0.1" id="asset-foreign-stock" placeholder="0"></label>
-              <label>채권 <input type="number" min="0" step="0.1" id="asset-bond" placeholder="0"></label>
-              <label>예금/현금 <input type="number" min="0" step="0.1" id="asset-cash" placeholder="0"></label>
-              <label>펀드/기타 <input type="number" min="0" step="0.1" id="asset-fund" placeholder="0"></label>
+              <label>국내주식 <input type="number" min="0" step="1" id="asset-domestic-stock" placeholder="0"></label>
+              <label>해외주식 <input type="number" min="0" step="1" id="asset-foreign-stock" placeholder="0"></label>
+              <label>채권 <input type="number" min="0" step="1" id="asset-bond" placeholder="0"></label>
+              <label>예금/현금 <input type="number" min="0" step="1" id="asset-cash" placeholder="0"></label>
+              <label>펀드/기타 <input type="number" min="0" step="1" id="asset-fund" placeholder="0"></label>
               <button type="submit" class="d96-btn-primary">저장</button>
             </form>
 
@@ -148,7 +148,7 @@
       <div class="d96-footer">
         <div class="d96-footer-nav">
           <span>대시보드</span>
-          <span>웨이팅</span>
+          <span>대기</span>
           <span>고객센터</span>
           <span>약관</span>
         </div>

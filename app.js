@@ -106,7 +106,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn-register-small";
-      btn.textContent = "웨이팅 등록";
+      btn.textContent = "대기 등록";
       btn.addEventListener("click", function () {
         openRegisterScreen(branch);
       });
@@ -473,9 +473,8 @@
     try { return JSON.parse(raw); } catch (e) { return null; }
   }
 
-  function formatWon(eok) {
-    var won = Math.round(eok * 100000000);
-    return won.toLocaleString("ko-KR");
+  function formatWon(won) {
+    return Math.round(won).toLocaleString("ko-KR");
   }
 
   function renderAssets() {
@@ -530,7 +529,7 @@
     e.preventDefault();
     var data = {};
     ASSET_FIELDS.forEach(function (f) {
-      data[f.id] = parseFloat(document.getElementById(f.id).value) || 0;
+      data[f.id] = parseInt(document.getElementById(f.id).value, 10) || 0;
     });
     data.savedAt = formatDate(new Date());
     localStorage.setItem(ASSET_KEY, JSON.stringify(data));
