@@ -8,9 +8,10 @@
   var SERVICE_INTERVAL_MS = 6000;
 
   var BRANCHES = [
-    { id: "gangnam", name: "강남지점", waitingTeams: 8, avgServiceMin: 12 },
-    { id: "yeouido", name: "여의도지점", waitingTeams: 5, avgServiceMin: 15 },
-    { id: "pangyo", name: "판교지점", waitingTeams: 3, avgServiceMin: 10 }
+    { id: "seomyeon", name: "부산서면지점", waitingTeams: 6, avgServiceMin: 11 },
+    { id: "centum", name: "센텀지점", waitingTeams: 4, avgServiceMin: 13 },
+    { id: "changwon", name: "창원지점", waitingTeams: 3, avgServiceMin: 10 },
+    { id: "ulsan", name: "울산지점", waitingTeams: 5, avgServiceMin: 12 }
   ];
 
   var PURPOSES = ["신규 계좌개설", "자산관리 상담", "상품 가입/해지", "기타 상담"];
