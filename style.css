@@ -571,7 +571,7 @@ body {
 }
 
 .d96-eyebrow {
-  background: #d77a7a;
+  background: #14130f;
   padding: 24px 16px;
 }
 
@@ -581,7 +581,7 @@ body {
   font-weight: 900;
   font-size: 36px;
   line-height: 1;
-  color: #000000;
+  color: #e6cd8a;
   text-transform: uppercase;
 }
 
@@ -630,12 +630,64 @@ body {
   color: #000000;
 }
 
-.d96-tint-sky { background: #9ab6c8; }
-.d96-tint-peach { background: #e6915d; }
-.d96-tint-periwinkle { background: #8c9ae0; }
-.d96-tint-salmon { background: #d77a7a; }
-.d96-tint-lime { background: #c0d4a7; }
-.d96-tint-steel { background: #a5b8c0; }
+.d96-tint-dark { background: #1c1b17; }
+
+/* 자산 구조 세그먼트 컬러 — 골드에서 블랙으로 이어지는 단일 톤 램프 */
+.d96-tint-sky { background: #c9a24b; }
+.d96-tint-salmon { background: #a3823c; }
+.d96-tint-periwinkle { background: #7c6a4a; }
+.d96-tint-lime { background: #5a5750; }
+.d96-tint-steel { background: #302e2a; }
+
+.d96-ribbon-body.d96-tint-dark {
+  color: #e8e4d8;
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-empty { color: #9a9686; }
+.d96-ribbon-body.d96-tint-dark .d96-asset-amt { color: #c8c3b4; }
+
+.d96-ribbon-body.d96-tint-dark .d96-scale-btn {
+  background: #262520;
+  color: #b8b4a6;
+  border-right-color: rgba(201, 162, 75, 0.35);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-scale-btn.active {
+  background: #c9a24b;
+  color: #1a1a1a;
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-scale {
+  border-color: rgba(201, 162, 75, 0.35);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-asset-bar {
+  border-color: rgba(201, 162, 75, 0.35);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-asset-bar span {
+  border-right-color: rgba(0, 0, 0, 0.4);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-asset-list li {
+  background: #262520;
+  border-color: rgba(201, 162, 75, 0.35);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-swatch {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-btn-primary {
+  background: #c9a24b;
+  color: #1a1a1a;
+  border-color: #c9a24b;
+}
+
+.d96-ribbon-body.d96-tint-dark .d96-asset-total,
+.d96-ribbon-body.d96-tint-dark .d96-form-label {
+  color: #f2eee2;
+}
 
 .d96-empty {
   font-size: 12px;
