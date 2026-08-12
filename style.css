@@ -715,9 +715,10 @@ body {
 }
 
 .d96-scale-btn {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   text-align: center;
-  padding: 10px 4px;
+  padding: 10px 2px;
   font-size: 11px;
   font-family: Helvetica, Arial, system-ui, sans-serif;
   font-weight: 700;
@@ -726,6 +727,7 @@ body {
   border: none;
   border-right: 1px solid #000000;
   cursor: pointer;
+  overflow-wrap: break-word;
 }
 
 .d96-scale-btn:last-child { border-right: none; }
@@ -762,6 +764,23 @@ body {
   font-family: "Times New Roman", Times, serif;
   font-size: 14px;
   color: #000000;
+}
+
+.d96-asset-form textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 0;
+  padding: 6px 8px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+.d96-form-label-spaced {
+  margin-top: 18px;
 }
 
 .d96-btn-primary {
@@ -812,8 +831,9 @@ body {
 
 .d96-asset-list li {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   background: #ffffff;
   border: 1px solid #000000;
   padding: 6px 10px;
@@ -827,9 +847,9 @@ body {
   border: 1px solid #000000;
 }
 
-.d96-asset-name { font-weight: 700; flex: 1; }
-.d96-asset-pct { font-family: "Times New Roman", Times, serif; }
-.d96-asset-amt { color: #333333; margin-left: auto; }
+.d96-asset-name { font-weight: 700; flex: 1 1 auto; min-width: 0; }
+.d96-asset-pct { font-family: "Times New Roman", Times, serif; flex: 0 0 auto; }
+.d96-asset-amt { color: #333333; margin-left: auto; flex: 0 0 auto; white-space: nowrap; }
 
 .d96-footer {
   border-top: 1px solid #000000;

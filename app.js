@@ -421,6 +421,35 @@
     });
   });
 
+  // ---- 상속/증여 ----
+
+  var INHERITANCE_KEY = "d96_inheritance_note";
+  var inheritanceForm = document.getElementById("inheritance-form");
+  var inheritanceInput = document.getElementById("inheritance-input");
+  var inheritanceStatusEl = document.getElementById("inheritance-status");
+
+  function loadInheritance() {
+    var raw = localStorage.getItem(INHERITANCE_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+
+  function renderInheritance() {
+    var saved = loadInheritance();
+    inheritanceStatusEl.textContent = saved
+      ? "저장됨: " + saved.savedAt
+      : "아직 입력하지 않았습니다.";
+  }
+
+  inheritanceForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    localStorage.setItem(INHERITANCE_KEY, JSON.stringify({
+      text: inheritanceInput.value.trim(),
+      savedAt: formatDate(new Date())
+    }));
+    renderInheritance();
+  });
+
   // ---- 자산 구조 ----
 
   var ASSET_KEY = "d96_asset_structure";
@@ -444,8 +473,9 @@
     try { return JSON.parse(raw); } catch (e) { return null; }
   }
 
-  function formatEok(n) {
-    return (Math.round(n * 10) / 10).toString();
+  function formatWon(eok) {
+    var won = Math.round(eok * 100000000);
+    return won.toLocaleString("ko-KR");
   }
 
   function renderAssets() {
@@ -454,14 +484,14 @@
     assetListEl.innerHTML = "";
 
     if (!saved) {
-      assetTotalEl.textContent = "총 자산 0억원";
+      assetTotalEl.textContent = "총 자산 0원";
       assetStatusEl.textContent = "아직 입력하지 않았습니다.";
       return;
     }
 
     var total = 0;
     ASSET_FIELDS.forEach(function (f) { total += (saved[f.id] || 0); });
-    assetTotalEl.textContent = "총 자산 " + formatEok(total) + "억원";
+    assetTotalEl.textContent = "총 자산 " + formatWon(total) + "원";
 
     ASSET_FIELDS.forEach(function (f) {
       var val = saved[f.id] || 0;
@@ -485,7 +515,7 @@
       pctEl.textContent = pct + "%";
       var amtEl = document.createElement("span");
       amtEl.className = "d96-asset-amt";
-      amtEl.textContent = formatEok(val) + "억원";
+      amtEl.textContent = formatWon(val) + "원";
       li.appendChild(swatch);
       li.appendChild(name);
       li.appendChild(pctEl);
@@ -516,7 +546,12 @@
         }
       });
     }
+    var savedInheritance = loadInheritance();
+    if (savedInheritance) {
+      inheritanceInput.value = savedInheritance.text;
+    }
     renderProfile();
+    renderInheritance();
     renderAssets();
   }
 
