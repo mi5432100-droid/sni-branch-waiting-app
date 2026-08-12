@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>삼성증권 SNI Center | 지점 방문 웨이팅</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="mode-switch">
+    <button type="button" class="mode-tab active" id="tab-waiting">웨이팅</button>
+    <button type="button" class="mode-tab" id="tab-dashboard">투자 대시보드</button>
+  </nav>
+
+  <div id="view-waiting" class="view-waiting">
+<div class="app">
+  <header class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <svg viewBox="0 0 400 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#c9a24b" stroke-width="1" fill="none">
+          <line x1="0" y1="118" x2="400" y2="118"/>
+          <path d="M40,118 V60 H70 V118"/>
+          <path d="M100,118 V40 H140 V118"/>
+          <path d="M170,118 V75 H195 V118"/>
+          <path d="M230,118 V25 H270 V118"/>
+          <path d="M300,118 V55 H330 V118"/>
+          <path d="M355,118 V85 H380 V118"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Samsung Securities</p>
+      <h1 class="hero-title">SNI Center</h1>
+      <div class="hero-rule"></div>
+      <p class="hero-tagline">지점 방문 프라이빗 웨이팅</p>
+    </div>
+  </header>
+
+  <main id="screen-branches" class="screen">
+    <p class="screen-desc">지점을 선택하고 미리 웨이팅을 등록하세요.</p>
+    <ul id="branch-list" class="branch-list"></ul>
+  </main>
+
+  <main id="screen-register" class="screen hidden">
+    <button type="button" class="btn-back" id="btn-back-to-branches">&larr; 뒤로</button>
+    <h2 id="register-branch-name"></h2>
+    <p class="screen-desc">상담 목적을 선택해주세요.</p>
+    <div class="purpose-list" id="purpose-list"></div>
+    <button type="button" class="btn-primary" id="btn-confirm-register" disabled>웨이팅 등록하기</button>
+  </main>
+
+  <main id="screen-status" class="screen hidden">
+    <div class="status-card">
+      <p class="status-branch" id="status-branch-name"></p>
+      <p class="status-purpose" id="status-purpose"></p>
+      <div class="position-display">
+        <span class="position-number" id="position-number">-</span>
+        <span class="position-label">팀 남음</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p class="eta" id="eta-text"></p>
+    </div>
+    <div id="notice-banner" class="notice-banner hidden"></div>
+
+    <div class="prep-section">
+      <p class="prep-status" id="prep-status-text">사전 준비: 미완료</p>
+      <button type="button" class="btn-outline" id="btn-go-prep">상담 준비하기</button>
+    </div>
+
+    <button type="button" class="btn-secondary" id="btn-cancel-waiting">웨이팅 취소</button>
+  </main>
+
+  <main id="screen-prep" class="screen hidden">
+    <button type="button" class="btn-back" id="btn-back-to-status">&larr; 뒤로</button>
+    <h2>상담 준비</h2>
+    <p class="screen-desc" id="prep-purpose-desc"></p>
+
+    <h3 class="prep-subtitle">준비 서류 체크리스트</h3>
+    <div id="prep-checklist" class="prep-checklist"></div>
+
+    <h3 class="prep-subtitle">사전 메모 (선택)</h3>
+    <textarea id="prep-memo" class="prep-memo" placeholder="상담 전 미리 남기고 싶은 내용을 적어주세요."></textarea>
+
+    <h3 class="prep-subtitle">본인인증</h3>
+    <button type="button" class="btn-outline" id="btn-identity-verify">본인인증 하기</button>
+
+    <button type="button" class="btn-primary" id="btn-complete-prep">준비 완료</button>
+  </main>
+</div>
+  </div>
+
+  <div id="view-dashboard" class="view-dashboard hidden">
+    <div class="d96-frame">
+      <div class="d96-topbanner">
+        <p class="d96-topbanner-title">MY INVESTMENT DASHBOARD</p>
+        <p class="d96-topbanner-callout">고객센터 문의</p>
+      </div>
+
+      <div class="d96-eyebrow">
+        <h1>투자 대시보드</h1>
+      </div>
+
+      <p class="d96-intro">관심종목, 메모, 체크리스트를 한 화면에서 관리하세요.</p>
+
+      <div class="d96-panels">
+        <section class="d96-ribbon">
+          <div class="d96-ribbon-title">관심종목</div>
+          <div class="d96-ribbon-body d96-tint-sky">
+            <form id="watchlist-form" class="d96-form">
+              <input type="text" id="watchlist-name-input" placeholder="종목명 (예: 삼성전자)" required>
+              <input type="text" id="watchlist-memo-input" placeholder="메모 (예: 목표가 9만원)">
+              <button type="submit" class="d96-btn-primary">추가</button>
+            </form>
+            <ul id="watchlist-list" class="d96-list"></ul>
+            <p id="watchlist-empty" class="d96-empty">등록된 관심종목이 없습니다.</p>
+          </div>
+        </section>
+
+        <section class="d96-ribbon">
+          <div class="d96-ribbon-title">메모</div>
+          <div class="d96-ribbon-body d96-tint-peach">
+            <form id="note-form" class="d96-form">
+              <textarea id="note-input" placeholder="메모를 입력하세요." required></textarea>
+              <button type="submit" class="d96-btn-primary">추가</button>
+            </form>
+            <ul id="note-list" class="d96-list"></ul>
+            <p id="note-empty" class="d96-empty">작성된 메모가 없습니다.</p>
+          </div>
+        </section>
+
+        <section class="d96-ribbon">
+          <div class="d96-ribbon-title">체크리스트</div>
+          <div class="d96-ribbon-body d96-tint-periwinkle">
+            <form id="checklist-form" class="d96-form">
+              <input type="text" id="checklist-input" placeholder="할 일을 입력하세요." required>
+              <button type="submit" class="d96-btn-primary">추가</button>
+            </form>
+            <ul id="checklist-list" class="d96-list"></ul>
+            <p id="checklist-empty" class="d96-empty">체크리스트 항목이 없습니다.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="d96-footer">
+        <div class="d96-footer-nav">
+          <span>대시보드</span>
+          <span>웨이팅</span>
+          <span>고객센터</span>
+          <span>약관</span>
+        </div>
+        <p class="d96-footer-caption"><a href="#" class="d96-link">Copyright</a> · 삼성증권 SNI Center 프로토타입 · 모든 데이터는 이 브라우저에만 저장됩니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

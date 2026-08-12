@@ -1,0 +1,11 @@
+# Secrets
+.env
+.env.*
+
+# Files unrelated to this app, kept local only
+hello.html
+국내_리테일_투자자_동향.pptx
+
+# OS junk
+.DS_Store
+Thumbs.db
