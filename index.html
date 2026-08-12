@@ -99,44 +99,41 @@
         <h1>투자 대시보드</h1>
       </div>
 
-      <p class="d96-intro">투자자 성향과 자산 구조를 한눈에 확인하세요. (샘플 데이터)</p>
+      <p class="d96-intro">본인의 투자자 성향과 자산 구조를 직접 입력해보세요.</p>
 
       <div class="d96-panels d96-panels-2">
         <section class="d96-ribbon">
           <div class="d96-ribbon-title">투자자 성향</div>
           <div class="d96-ribbon-body d96-tint-sky">
-            <p class="d96-profile-label">적극투자형</p>
-            <div class="d96-scale">
-              <span>안정형</span>
-              <span>안정추구형</span>
-              <span>위험중립형</span>
-              <span class="active">적극투자형</span>
-              <span>공격투자형</span>
+            <p class="d96-form-label">본인의 투자 성향을 선택해주세요.</p>
+            <div class="d96-scale" id="profile-scale">
+              <button type="button" class="d96-scale-btn" data-value="안정형">안정형</button>
+              <button type="button" class="d96-scale-btn" data-value="안정추구형">안정추구형</button>
+              <button type="button" class="d96-scale-btn" data-value="위험중립형">위험중립형</button>
+              <button type="button" class="d96-scale-btn" data-value="적극투자형">적극투자형</button>
+              <button type="button" class="d96-scale-btn" data-value="공격투자형">공격투자형</button>
             </div>
-            <p class="d96-profile-desc">시장 상황에 따라 원금 손실을 감수하더라도 높은 수익을 추구하는 투자 성향입니다.</p>
-            <p class="d96-empty">최근 진단일 2026-06-15 (샘플 데이터)</p>
+            <p class="d96-empty" id="profile-status">아직 선택하지 않았습니다.</p>
           </div>
         </section>
 
         <section class="d96-ribbon">
           <div class="d96-ribbon-title">자산 구조</div>
           <div class="d96-ribbon-body d96-tint-peach">
-            <p class="d96-asset-total">총 자산 12.4억원</p>
-            <div class="d96-asset-bar">
-              <span class="d96-tint-sky" style="width:34%"></span>
-              <span class="d96-tint-salmon" style="width:25%"></span>
-              <span class="d96-tint-periwinkle" style="width:18%"></span>
-              <span class="d96-tint-lime" style="width:14%"></span>
-              <span class="d96-tint-steel" style="width:9%"></span>
-            </div>
-            <ul class="d96-asset-list">
-              <li><span class="d96-swatch d96-tint-sky"></span><span class="d96-asset-name">국내주식</span><span class="d96-asset-pct">34%</span><span class="d96-asset-amt">4.2억원</span></li>
-              <li><span class="d96-swatch d96-tint-salmon"></span><span class="d96-asset-name">해외주식</span><span class="d96-asset-pct">25%</span><span class="d96-asset-amt">3.1억원</span></li>
-              <li><span class="d96-swatch d96-tint-periwinkle"></span><span class="d96-asset-name">채권</span><span class="d96-asset-pct">18%</span><span class="d96-asset-amt">2.2억원</span></li>
-              <li><span class="d96-swatch d96-tint-lime"></span><span class="d96-asset-name">예금/현금</span><span class="d96-asset-pct">14%</span><span class="d96-asset-amt">1.8억원</span></li>
-              <li><span class="d96-swatch d96-tint-steel"></span><span class="d96-asset-name">펀드/기타</span><span class="d96-asset-pct">9%</span><span class="d96-asset-amt">1.1억원</span></li>
-            </ul>
-            <p class="d96-empty">2026-08-01 기준 (샘플 데이터)</p>
+            <p class="d96-form-label">보유 자산을 입력해주세요. (단위: 억원)</p>
+            <form id="asset-form" class="d96-asset-form">
+              <label>국내주식 <input type="number" min="0" step="0.1" id="asset-domestic-stock" placeholder="0"></label>
+              <label>해외주식 <input type="number" min="0" step="0.1" id="asset-foreign-stock" placeholder="0"></label>
+              <label>채권 <input type="number" min="0" step="0.1" id="asset-bond" placeholder="0"></label>
+              <label>예금/현금 <input type="number" min="0" step="0.1" id="asset-cash" placeholder="0"></label>
+              <label>펀드/기타 <input type="number" min="0" step="0.1" id="asset-fund" placeholder="0"></label>
+              <button type="submit" class="d96-btn-primary">저장</button>
+            </form>
+
+            <p class="d96-asset-total" id="asset-total-display">총 자산 0억원</p>
+            <div class="d96-asset-bar" id="asset-bar"></div>
+            <ul class="d96-asset-list" id="asset-list"></ul>
+            <p class="d96-empty" id="asset-status">아직 입력하지 않았습니다.</p>
           </div>
         </section>
       </div>

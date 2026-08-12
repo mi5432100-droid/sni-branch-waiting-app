@@ -362,7 +362,7 @@
 
   // ===================================================================
   // Investment dashboard (투자자 성향 / 자산 구조)
-  // 현재는 정적 샘플 데이터만 표시하는 화면이라 별도 저장 로직이 없다.
+  // 고객이 직접 입력하는 화면. localStorage에 저장한다.
   // ===================================================================
 
   var tabWaiting = document.getElementById("tab-waiting");
@@ -381,6 +381,145 @@
   tabWaiting.addEventListener("click", function () { switchMode("waiting"); });
   tabDashboard.addEventListener("click", function () { switchMode("dashboard"); });
 
+  function formatDate(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  // ---- 투자자 성향 ----
+
+  var PROFILE_KEY = "d96_investor_profile";
+  var profileScaleEl = document.getElementById("profile-scale");
+  var profileStatusEl = document.getElementById("profile-status");
+
+  function loadProfile() {
+    var raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+
+  function renderProfile() {
+    var saved = loadProfile();
+    var buttons = profileScaleEl.querySelectorAll(".d96-scale-btn");
+    buttons.forEach(function (btn) {
+      btn.classList.toggle("active", !!saved && saved.value === btn.dataset.value);
+    });
+    profileStatusEl.textContent = saved
+      ? "선택함: " + saved.value + " (" + saved.savedAt + " 저장)"
+      : "아직 선택하지 않았습니다.";
+  }
+
+  profileScaleEl.querySelectorAll(".d96-scale-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      localStorage.setItem(PROFILE_KEY, JSON.stringify({
+        value: btn.dataset.value,
+        savedAt: formatDate(new Date())
+      }));
+      renderProfile();
+    });
+  });
+
+  // ---- 자산 구조 ----
+
+  var ASSET_KEY = "d96_asset_structure";
+  var ASSET_FIELDS = [
+    { id: "asset-domestic-stock", label: "국내주식", tint: "d96-tint-sky" },
+    { id: "asset-foreign-stock", label: "해외주식", tint: "d96-tint-salmon" },
+    { id: "asset-bond", label: "채권", tint: "d96-tint-periwinkle" },
+    { id: "asset-cash", label: "예금/현금", tint: "d96-tint-lime" },
+    { id: "asset-fund", label: "펀드/기타", tint: "d96-tint-steel" }
+  ];
+
+  var assetForm = document.getElementById("asset-form");
+  var assetTotalEl = document.getElementById("asset-total-display");
+  var assetBarEl = document.getElementById("asset-bar");
+  var assetListEl = document.getElementById("asset-list");
+  var assetStatusEl = document.getElementById("asset-status");
+
+  function loadAssets() {
+    var raw = localStorage.getItem(ASSET_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+
+  function formatEok(n) {
+    return (Math.round(n * 10) / 10).toString();
+  }
+
+  function renderAssets() {
+    var saved = loadAssets();
+    assetBarEl.innerHTML = "";
+    assetListEl.innerHTML = "";
+
+    if (!saved) {
+      assetTotalEl.textContent = "총 자산 0억원";
+      assetStatusEl.textContent = "아직 입력하지 않았습니다.";
+      return;
+    }
+
+    var total = 0;
+    ASSET_FIELDS.forEach(function (f) { total += (saved[f.id] || 0); });
+    assetTotalEl.textContent = "총 자산 " + formatEok(total) + "억원";
+
+    ASSET_FIELDS.forEach(function (f) {
+      var val = saved[f.id] || 0;
+      var pct = total > 0 ? Math.round((val / total) * 100) : 0;
+
+      if (val > 0) {
+        var seg = document.createElement("span");
+        seg.className = f.tint;
+        seg.style.width = pct + "%";
+        assetBarEl.appendChild(seg);
+      }
+
+      var li = document.createElement("li");
+      var swatch = document.createElement("span");
+      swatch.className = "d96-swatch " + f.tint;
+      var name = document.createElement("span");
+      name.className = "d96-asset-name";
+      name.textContent = f.label;
+      var pctEl = document.createElement("span");
+      pctEl.className = "d96-asset-pct";
+      pctEl.textContent = pct + "%";
+      var amtEl = document.createElement("span");
+      amtEl.className = "d96-asset-amt";
+      amtEl.textContent = formatEok(val) + "억원";
+      li.appendChild(swatch);
+      li.appendChild(name);
+      li.appendChild(pctEl);
+      li.appendChild(amtEl);
+      assetListEl.appendChild(li);
+    });
+
+    assetStatusEl.textContent = "저장됨: " + saved.savedAt;
+  }
+
+  assetForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var data = {};
+    ASSET_FIELDS.forEach(function (f) {
+      data[f.id] = parseFloat(document.getElementById(f.id).value) || 0;
+    });
+    data.savedAt = formatDate(new Date());
+    localStorage.setItem(ASSET_KEY, JSON.stringify(data));
+    renderAssets();
+  });
+
+  function initDashboard() {
+    var savedAssets = loadAssets();
+    if (savedAssets) {
+      ASSET_FIELDS.forEach(function (f) {
+        if (savedAssets[f.id] != null) {
+          document.getElementById(f.id).value = savedAssets[f.id];
+        }
+      });
+    }
+    renderProfile();
+    renderAssets();
+  }
+
   function init() {
     renderBranchList();
     var existing = loadState();
@@ -389,6 +528,7 @@
     } else {
       showScreen("branches");
     }
+    initDashboard();
   }
 
   init();

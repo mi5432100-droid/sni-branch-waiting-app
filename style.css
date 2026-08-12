@@ -647,14 +647,13 @@ body {
   display: none;
 }
 
-/* ---- 투자자 성향 ---- */
+/* ---- 투자자 성향 / 자산 구조 (사용자 입력) ---- */
 
-.d96-profile-label {
-  margin: 0 0 12px;
-  font-family: "Arial Black", Helvetica, system-ui, sans-serif;
-  font-weight: 900;
-  font-size: 22px;
-  color: #000000;
+.d96-form-label {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Helvetica, Arial, system-ui, sans-serif;
 }
 
 .d96-scale {
@@ -663,31 +662,70 @@ body {
   margin-bottom: 14px;
 }
 
-.d96-scale span {
+.d96-scale-btn {
   flex: 1;
   text-align: center;
-  padding: 8px 4px;
+  padding: 10px 4px;
   font-size: 11px;
   font-family: Helvetica, Arial, system-ui, sans-serif;
   font-weight: 700;
   background: #ffffff;
+  color: #000000;
+  border: none;
   border-right: 1px solid #000000;
+  cursor: pointer;
 }
 
-.d96-scale span:last-child { border-right: none; }
+.d96-scale-btn:last-child { border-right: none; }
 
-.d96-scale span.active {
+.d96-scale-btn.active {
   background: #000000;
   color: #ffffff;
 }
 
-.d96-profile-desc {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
+/* ---- 자산 구조 ---- */
+
+.d96-asset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
 }
 
-/* ---- 자산 구조 ---- */
+.d96-asset-form label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-family: Helvetica, Arial, system-ui, sans-serif;
+}
+
+.d96-asset-form input[type="number"] {
+  width: 100px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 0;
+  padding: 4px 6px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+.d96-btn-primary {
+  align-self: flex-start;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 0;
+  font-family: Helvetica, Arial, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  cursor: pointer;
+  margin-top: 4px;
+}
 
 .d96-asset-total {
   margin: 0 0 14px;
