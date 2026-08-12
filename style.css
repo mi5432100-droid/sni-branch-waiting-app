@@ -37,29 +37,11 @@ body {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 44px 24px 54px;
+  padding: 44px 24px 32px;
   background:
     radial-gradient(circle at 28% -15%, rgba(201, 162, 75, 0.28), transparent 55%),
     linear-gradient(180deg, #0d0e12, #0a0b0e);
   border-bottom: 1px solid var(--border);
-}
-
-.hero-bg {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 60px;
-  opacity: 0.32;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to top, black 55%, transparent 100%);
-  mask-image: linear-gradient(to top, black 55%, transparent 100%);
-}
-
-.hero-bg svg {
-  width: 100%;
-  height: 100%;
-  display: block;
 }
 
 .hero-content {
