@@ -49,7 +49,9 @@
     <button type="button" class="btn-back" id="btn-back-to-branches">&larr; 뒤로</button>
     <p class="type-badge hidden" id="register-type-badge"></p>
     <h2 id="register-branch-name"></h2>
-    <p class="screen-desc">상담 목적을 선택해주세요.</p>
+    <p class="screen-desc">성함과 상담 목적을 입력해주세요.</p>
+    <label class="register-name-label" for="register-customer-name">성함</label>
+    <input type="text" id="register-customer-name" class="text-input" placeholder="성함을 입력해주세요" maxlength="20">
     <div class="purpose-list" id="purpose-list"></div>
     <button type="button" class="btn-primary" id="btn-confirm-register" disabled>대기 등록하기</button>
   </main>
@@ -57,6 +59,7 @@
   <main id="screen-status" class="screen hidden">
     <div class="status-card">
       <p class="type-badge hidden" id="status-type-badge"></p>
+      <p class="status-customer-name" id="status-customer-name"></p>
       <p class="status-branch" id="status-branch-name"></p>
       <p class="status-purpose" id="status-purpose"></p>
       <div class="position-display">

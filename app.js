@@ -143,11 +143,13 @@
   var branchListEl = document.getElementById("branch-list");
   var registerBranchNameEl = document.getElementById("register-branch-name");
   var registerTypeBadgeEl = document.getElementById("register-type-badge");
+  var registerCustomerNameInput = document.getElementById("register-customer-name");
   var purposeListEl = document.getElementById("purpose-list");
   var btnConfirmRegister = document.getElementById("btn-confirm-register");
   var btnBackToBranches = document.getElementById("btn-back-to-branches");
   var btnCancelWaiting = document.getElementById("btn-cancel-waiting");
 
+  var statusCustomerNameEl = document.getElementById("status-customer-name");
   var statusBranchNameEl = document.getElementById("status-branch-name");
   var statusTypeBadgeEl = document.getElementById("status-type-badge");
   var statusPurposeEl = document.getElementById("status-purpose");
@@ -273,11 +275,18 @@
     });
   }
 
+  var CUSTOMER_NAME_KEY = "wm_customer_name";
+
+  function updateConfirmButtonState() {
+    var hasName = registerCustomerNameInput.value.trim() !== "";
+    btnConfirmRegister.disabled = !hasName || !pendingPurpose;
+  }
+
   function openRegisterScreen(branch) {
     pendingBranch = branch;
     pendingPurpose = null;
     registerBranchNameEl.textContent = branch.name;
-    btnConfirmRegister.disabled = true;
+    registerCustomerNameInput.value = localStorage.getItem(CUSTOMER_NAME_KEY) || "";
 
     var isSni = branch.type === "sni";
     registerTypeBadgeEl.textContent = "SNI · 예약제";
@@ -296,13 +305,16 @@
           function (child) { child.classList.remove("selected"); }
         );
         div.classList.add("selected");
-        btnConfirmRegister.disabled = false;
+        updateConfirmButtonState();
       });
       purposeListEl.appendChild(div);
     });
 
+    updateConfirmButtonState();
     showScreen("register");
   }
+
+  registerCustomerNameInput.addEventListener("input", updateConfirmButtonState);
 
   function requestNotificationPermission() {
     if (!("Notification" in window)) return;
@@ -312,18 +324,21 @@
   }
 
   function confirmRegister() {
-    if (!pendingBranch || !pendingPurpose) return;
+    var customerName = registerCustomerNameInput.value.trim();
+    if (!pendingBranch || !pendingPurpose || !customerName) return;
     requestNotificationPermission();
     btnConfirmRegister.disabled = true;
 
     var branch = pendingBranch;
     var purpose = pendingPurpose;
+    localStorage.setItem(CUSTOMER_NAME_KEY, customerName);
 
     sb.from("waiting_entries").insert({
       branch_id: branch.id,
       branch_name: branch.name,
       branch_type: branch.type,
       purpose: purpose,
+      customer_name: customerName,
       avg_service_min: branch.avgServiceMin,
       status: "waiting"
     }).select().single().then(function (res) {
@@ -342,6 +357,7 @@
         branchType: branch.type,
         branchRegion: branch.region,
         purpose: purpose,
+        customerName: customerName,
         avgServiceMin: branch.avgServiceMin,
         initialAhead: entriesForBranch(branch.id).filter(function (e) { return e.id !== row.id; }).length,
         registeredAt: new Date(row.created_at).getTime(),
@@ -376,6 +392,7 @@
     sniNoteEl.classList.toggle("hidden", !isSni);
     positionLabelEl.textContent = isSni ? "번째 예약 순서" : "팀 남음";
 
+    statusCustomerNameEl.textContent = state.customerName ? state.customerName + " 고객님" : "";
     statusBranchNameEl.textContent = state.branchName;
     statusPurposeEl.textContent = state.purpose;
     positionNumberEl.textContent = remaining;
@@ -673,12 +690,16 @@
 
       var head = document.createElement("div");
       head.className = "pb-consult-head";
+      var customer = document.createElement("span");
+      customer.className = "pb-consult-customer";
+      customer.textContent = (entry.customer_name || "이름 미입력") + " 고객";
       var branch = document.createElement("span");
       branch.className = "pb-consult-branch";
       branch.textContent = entry.branch_name;
       var purpose = document.createElement("span");
       purpose.className = "pb-consult-purpose";
       purpose.textContent = entry.purpose;
+      head.appendChild(customer);
       head.appendChild(branch);
       head.appendChild(purpose);
 

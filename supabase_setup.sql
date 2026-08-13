@@ -10,11 +10,13 @@ create table if not exists waiting_entries (
   avg_service_min int not null default 10,
   status text not null default 'waiting', -- waiting | done | cancelled
   created_at timestamptz not null default now(),
-  consult_note text -- 고객이 대기 중 투자 대시보드에서 남긴 상담 요청 사항, PB 업무 탭에 실시간으로 표시됨
+  consult_note text, -- 고객이 대기 중 투자 대시보드에서 남긴 상담 요청 사항, PB 업무 탭에 실시간으로 표시됨
+  customer_name text -- 대기 등록 시 고객이 직접 입력한 이름, PB 업무 탭에 실시간으로 표시됨
 );
 
--- 이미 만든 테이블에 나중에 컬럼만 추가하는 경우 이 줄만 실행해도 됩니다.
+-- 이미 만든 테이블에 나중에 컬럼만 추가하는 경우 이 두 줄만 실행해도 됩니다.
 alter table waiting_entries add column if not exists consult_note text;
+alter table waiting_entries add column if not exists customer_name text;
 
 alter table waiting_entries enable row level security;
 
