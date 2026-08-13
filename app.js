@@ -929,16 +929,16 @@
 
   var ASSET_KEY = "d96_asset_structure";
   var ASSET_FIELDS = [
-    { id: "asset-domestic-stock", label: "국내주식", tint: "d96-tint-sky" },
-    { id: "asset-foreign-stock", label: "해외주식", tint: "d96-tint-salmon" },
-    { id: "asset-bond", label: "채권", tint: "d96-tint-periwinkle" },
-    { id: "asset-cash", label: "예금/현금", tint: "d96-tint-lime" },
-    { id: "asset-fund", label: "펀드/기타", tint: "d96-tint-steel" }
+    { id: "asset-domestic-stock", label: "국내주식", tint: "d96-tint-sky", color: "#c9a24b" },
+    { id: "asset-foreign-stock", label: "해외주식", tint: "d96-tint-salmon", color: "#a3823c" },
+    { id: "asset-bond", label: "채권", tint: "d96-tint-periwinkle", color: "#7c6a4a" },
+    { id: "asset-cash", label: "예금/현금", tint: "d96-tint-lime", color: "#5a5750" },
+    { id: "asset-fund", label: "펀드/기타", tint: "d96-tint-steel", color: "#302e2a" }
   ];
 
   var assetForm = document.getElementById("asset-form");
   var assetTotalEl = document.getElementById("asset-total-display");
-  var assetBarEl = document.getElementById("asset-bar");
+  var assetDonutEl = document.getElementById("asset-donut");
   var assetListEl = document.getElementById("asset-list");
   var assetStatusEl = document.getElementById("asset-status");
 
@@ -954,29 +954,35 @@
 
   function renderAssets() {
     var saved = loadAssets();
-    assetBarEl.innerHTML = "";
     assetListEl.innerHTML = "";
 
     if (!saved) {
       assetTotalEl.textContent = "총 자산 0원";
       assetStatusEl.textContent = "아직 입력하지 않았습니다.";
+      assetDonutEl.style.background = "#302e2a";
       return;
     }
 
     var total = 0;
     ASSET_FIELDS.forEach(function (f) { total += (saved[f.id] || 0); });
-    assetTotalEl.textContent = "총 자산 " + formatWon(total) + "원";
+    assetTotalEl.textContent = "총 자산\n" + formatWon(total) + "원";
+
+    var gradientStops = [];
+    var cursor = 0;
+    ASSET_FIELDS.forEach(function (f) {
+      var val = saved[f.id] || 0;
+      if (val <= 0 || total <= 0) return;
+      var pct = (val / total) * 100;
+      gradientStops.push(f.color + " " + cursor + "% " + (cursor + pct) + "%");
+      cursor += pct;
+    });
+    assetDonutEl.style.background = gradientStops.length
+      ? "conic-gradient(" + gradientStops.join(", ") + ")"
+      : "#302e2a";
 
     ASSET_FIELDS.forEach(function (f) {
       var val = saved[f.id] || 0;
       var pct = total > 0 ? Math.round((val / total) * 100) : 0;
-
-      if (val > 0) {
-        var seg = document.createElement("span");
-        seg.className = f.tint;
-        seg.style.width = pct + "%";
-        assetBarEl.appendChild(seg);
-      }
 
       var li = document.createElement("li");
       var swatch = document.createElement("span");
