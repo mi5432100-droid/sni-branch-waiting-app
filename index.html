@@ -24,11 +24,19 @@
       <div class="hero-rule"></div>
       <p class="hero-tagline">지점 방문 프라이빗 대기</p>
       <div class="hero-pb">
-        <img src="pb-profile.jpg" alt="전담 PB" class="hero-pb-photo">
+        <img src="pb-profile.jpg" alt="전담 PB" class="hero-pb-photo" id="hero-pb-photo">
         <div class="hero-pb-text">
           <p class="hero-pb-role">Dedicated Private Banker</p>
-          <p class="hero-pb-name">전담 PB</p>
+          <p class="hero-pb-name" id="hero-pb-name">김민준 PB</p>
         </div>
+      </div>
+      <div class="hero-pb-select" id="hero-pb-select">
+        <button type="button" class="hero-pb-thumb active" data-photo="pb-profile.jpg" data-name="김민준 PB">
+          <img src="pb-profile.jpg" alt="김민준 PB">
+        </button>
+        <button type="button" class="hero-pb-thumb" data-photo="pb-profile-2.webp" data-name="이도형 PB">
+          <img src="pb-profile-2.webp" alt="이도형 PB">
+        </button>
       </div>
     </div>
   </header>
@@ -201,24 +209,41 @@
 
   <div id="view-pb" class="view-pb hidden">
     <div class="pb-page">
-      <header class="pb-header">
+      <div id="pb-login-screen" class="pb-login">
         <p class="pb-eyebrow">Samsung Securities · PB 업무</p>
-        <h1 class="pb-title">PB 업무</h1>
-        <p class="pb-sub">대기 중인 고객의 상담 요청과, 조기상환·만기가 다가온 고객의 통화 타이밍을 한눈에 확인하세요.</p>
-      </header>
+        <h1 class="pb-title">PB 로그인</h1>
+        <p class="pb-sub">담당 PB 계정으로 로그인하면 대기 중인 고객 상담 요청과 자산 이벤트를 확인할 수 있습니다.</p>
+        <form id="pb-login-form" class="pb-login-form">
+          <input type="email" id="pb-login-email" class="text-input" placeholder="이메일" autocomplete="username" required>
+          <input type="password" id="pb-login-password" class="text-input" placeholder="비밀번호" autocomplete="current-password" required>
+          <button type="submit" class="btn-primary" id="btn-pb-login">로그인</button>
+          <p class="pb-login-error hidden" id="pb-login-error"></p>
+        </form>
+      </div>
 
-      <section class="pb-section">
-        <h2 class="pb-section-title">지금 대기 중인 상담 요청</h2>
-        <div class="pb-consult-list" id="pb-consult-list"></div>
-        <p class="pb-empty" id="pb-consult-empty">현재 상담 요청을 남긴 대기 고객이 없습니다.</p>
-      </section>
+      <div id="pb-content" class="hidden">
+        <header class="pb-header">
+          <p class="pb-eyebrow">Samsung Securities · PB 업무</p>
+          <div class="pb-header-row">
+            <h1 class="pb-title">PB 업무</h1>
+            <button type="button" class="btn-back" id="btn-pb-logout">로그아웃</button>
+          </div>
+          <p class="pb-sub">대기 중인 고객의 상담 요청과, 조기상환·만기가 다가온 고객의 통화 타이밍을 한눈에 확인하세요.</p>
+        </header>
 
-      <section class="pb-section">
-        <h2 class="pb-section-title">고객 자산 이벤트</h2>
-        <div class="pb-event-list" id="pb-event-list"></div>
-      </section>
+        <section class="pb-section">
+          <h2 class="pb-section-title">지금 대기 중인 상담 요청</h2>
+          <div class="pb-consult-list" id="pb-consult-list"></div>
+          <p class="pb-empty" id="pb-consult-empty">현재 상담 요청을 남긴 대기 고객이 없습니다.</p>
+        </section>
 
-      <p class="pb-footnote">고객 자산 이벤트는 샘플 데이터입니다 · 실제 서비스에서는 원장시스템과 연동됩니다.</p>
+        <section class="pb-section">
+          <h2 class="pb-section-title">고객 자산 이벤트</h2>
+          <div class="pb-event-list" id="pb-event-list"></div>
+        </section>
+
+        <p class="pb-footnote">고객 자산 이벤트는 샘플 데이터입니다 · 실제 서비스에서는 원장시스템과 연동됩니다.</p>
+      </div>
     </div>
   </div>
 </div>

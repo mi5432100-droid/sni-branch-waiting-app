@@ -87,7 +87,9 @@
       var state = loadState();
       if (state) renderStatus(state);
     }
-    if (!viewPb.classList.contains("hidden")) renderPbConsultRequests();
+    if (!viewPb.classList.contains("hidden") && !pbContentEl.classList.contains("hidden")) {
+      renderPbConsultRequests();
+    }
   }
 
   function subscribeRealtime() {
@@ -612,10 +614,7 @@
       m.view.classList.toggle("hidden", !active);
       m.tab.classList.toggle("active", active);
     });
-    if (mode === "pb") {
-      renderPbEvents();
-      renderPbConsultRequests();
-    }
+    if (mode === "pb") refreshPbAuthUI();
     if (mode === "dashboard") renderDashboardWaitingBanner();
   }
 
@@ -674,6 +673,66 @@
   var pbEventListEl = document.getElementById("pb-event-list");
   var pbConsultListEl = document.getElementById("pb-consult-list");
   var pbConsultEmptyEl = document.getElementById("pb-consult-empty");
+
+  // ---- PB 업무 로그인 (Supabase Auth) ----
+  // 고객 이름·상담 요청 같은 개인정보가 보이는 화면이라 PB 계정 로그인 없이는
+  // 볼 수 없게 막는다. 계정은 Supabase 대시보드에서 직접 만든 것만 로그인 가능
+  // (가입 폼은 두지 않음).
+
+  var pbLoginScreenEl = document.getElementById("pb-login-screen");
+  var pbContentEl = document.getElementById("pb-content");
+  var pbLoginFormEl = document.getElementById("pb-login-form");
+  var pbLoginEmailEl = document.getElementById("pb-login-email");
+  var pbLoginPasswordEl = document.getElementById("pb-login-password");
+  var pbLoginErrorEl = document.getElementById("pb-login-error");
+  var btnPbLogin = document.getElementById("btn-pb-login");
+  var btnPbLogout = document.getElementById("btn-pb-logout");
+
+  function showPbContent() {
+    pbLoginScreenEl.classList.add("hidden");
+    pbContentEl.classList.remove("hidden");
+    renderPbEvents();
+    renderPbConsultRequests();
+  }
+
+  function showPbLogin() {
+    pbContentEl.classList.add("hidden");
+    pbLoginScreenEl.classList.remove("hidden");
+  }
+
+  function refreshPbAuthUI() {
+    sb.auth.getSession().then(function (res) {
+      if (res.data && res.data.session) {
+        showPbContent();
+      } else {
+        showPbLogin();
+      }
+    });
+  }
+
+  pbLoginFormEl.addEventListener("submit", function (e) {
+    e.preventDefault();
+    btnPbLogin.disabled = true;
+    pbLoginErrorEl.classList.add("hidden");
+
+    sb.auth.signInWithPassword({
+      email: pbLoginEmailEl.value.trim(),
+      password: pbLoginPasswordEl.value
+    }).then(function (res) {
+      btnPbLogin.disabled = false;
+      if (res.error) {
+        pbLoginErrorEl.textContent = "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.";
+        pbLoginErrorEl.classList.remove("hidden");
+        return;
+      }
+      pbLoginPasswordEl.value = "";
+      showPbContent();
+    });
+  });
+
+  btnPbLogout.addEventListener("click", function () {
+    sb.auth.signOut().then(function () { showPbLogin(); });
+  });
 
   // 고객이 대기 중 투자 대시보드에서 남긴 상담 요청을 실시간 waitingEntries 캐시에서 뽑아 보여준다.
   function renderPbConsultRequests() {
@@ -1041,9 +1100,37 @@
     renderAssets();
   }
 
+  // ---- 전담 PB 선택 ----
+
+  var PB_SELECT_KEY = "wm_selected_pb_photo";
+  var heroPbPhotoEl = document.getElementById("hero-pb-photo");
+  var heroPbNameEl = document.getElementById("hero-pb-name");
+  var heroPbThumbs = document.querySelectorAll(".hero-pb-thumb");
+
+  function selectPb(thumb) {
+    heroPbPhotoEl.src = thumb.dataset.photo;
+    heroPbNameEl.textContent = thumb.dataset.name;
+    heroPbThumbs.forEach(function (t) { t.classList.toggle("active", t === thumb); });
+    localStorage.setItem(PB_SELECT_KEY, thumb.dataset.photo);
+  }
+
+  heroPbThumbs.forEach(function (thumb) {
+    thumb.addEventListener("click", function () { selectPb(thumb); });
+  });
+
+  function initPbSelection() {
+    var savedPhoto = localStorage.getItem(PB_SELECT_KEY);
+    if (!savedPhoto) return;
+    var match = Array.prototype.filter.call(heroPbThumbs, function (t) {
+      return t.dataset.photo === savedPhoto;
+    })[0];
+    if (match) selectPb(match);
+  }
+
   function init() {
     renderRegionList();
     initDashboard();
+    initPbSelection();
     subscribeRealtime();
     setInterval(advanceQueues, SERVICE_INTERVAL_MS);
 
