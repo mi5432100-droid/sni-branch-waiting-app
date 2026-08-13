@@ -87,6 +87,7 @@
       var state = loadState();
       if (state) renderStatus(state);
     }
+    if (!viewPb.classList.contains("hidden")) renderPbConsultRequests();
   }
 
   function subscribeRealtime() {
@@ -594,7 +595,10 @@
       m.view.classList.toggle("hidden", !active);
       m.tab.classList.toggle("active", active);
     });
-    if (mode === "pb") renderPbEvents();
+    if (mode === "pb") {
+      renderPbEvents();
+      renderPbConsultRequests();
+    }
     if (mode === "dashboard") renderDashboardWaitingBanner();
   }
 
@@ -651,6 +655,42 @@
   ];
 
   var pbEventListEl = document.getElementById("pb-event-list");
+  var pbConsultListEl = document.getElementById("pb-consult-list");
+  var pbConsultEmptyEl = document.getElementById("pb-consult-empty");
+
+  // 고객이 대기 중 투자 대시보드에서 남긴 상담 요청을 실시간 waitingEntries 캐시에서 뽑아 보여준다.
+  function renderPbConsultRequests() {
+    var withNotes = waitingEntries
+      .filter(function (e) { return e.consult_note && e.consult_note.trim() !== ""; })
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+
+    pbConsultListEl.innerHTML = "";
+    pbConsultEmptyEl.classList.toggle("hidden", withNotes.length > 0);
+
+    withNotes.forEach(function (entry) {
+      var card = document.createElement("div");
+      card.className = "pb-consult-card";
+
+      var head = document.createElement("div");
+      head.className = "pb-consult-head";
+      var branch = document.createElement("span");
+      branch.className = "pb-consult-branch";
+      branch.textContent = entry.branch_name;
+      var purpose = document.createElement("span");
+      purpose.className = "pb-consult-purpose";
+      purpose.textContent = entry.purpose;
+      head.appendChild(branch);
+      head.appendChild(purpose);
+
+      var note = document.createElement("p");
+      note.className = "pb-consult-note";
+      note.textContent = entry.consult_note;
+
+      card.appendChild(head);
+      card.appendChild(note);
+      pbConsultListEl.appendChild(card);
+    });
+  }
 
   function loadResolvedEvents() {
     var raw = localStorage.getItem(PB_RESOLVED_KEY);
@@ -820,11 +860,19 @@
 
   consultForm.addEventListener("submit", function (e) {
     e.preventDefault();
+    var text = consultInput.value.trim();
     localStorage.setItem(CONSULT_KEY, JSON.stringify({
-      text: consultInput.value.trim(),
+      text: text,
       savedAt: formatDate(new Date())
     }));
     renderConsultRequest();
+
+    // 대기 중이면 PB 업무 탭에서도 볼 수 있게 해당 대기 등록 건에 상담 요청을 함께 저장한다.
+    var state = loadState();
+    if (state && state.entryId) {
+      sb.from("waiting_entries").update({ consult_note: text }).eq("id", state.entryId)
+        .then(function () {});
+    }
   });
 
   // ---- 상속/증여 ----
