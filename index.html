@@ -11,6 +11,7 @@
   <nav class="mode-switch">
     <button type="button" class="mode-tab active" id="tab-waiting">대기</button>
     <button type="button" class="mode-tab" id="tab-dashboard">투자 대시보드</button>
+    <button type="button" class="mode-tab" id="tab-pb">PB 업무</button>
   </nav>
 
   <div id="view-waiting" class="view-waiting">
@@ -39,6 +40,7 @@
 
   <main id="screen-register" class="screen hidden">
     <button type="button" class="btn-back" id="btn-back-to-branches">&larr; 뒤로</button>
+    <p class="type-badge hidden" id="register-type-badge"></p>
     <h2 id="register-branch-name"></h2>
     <p class="screen-desc">상담 목적을 선택해주세요.</p>
     <div class="purpose-list" id="purpose-list"></div>
@@ -47,16 +49,18 @@
 
   <main id="screen-status" class="screen hidden">
     <div class="status-card">
+      <p class="type-badge hidden" id="status-type-badge"></p>
       <p class="status-branch" id="status-branch-name"></p>
       <p class="status-purpose" id="status-purpose"></p>
       <div class="position-display">
         <span class="position-number" id="position-number">-</span>
-        <span class="position-label">팀 남음</span>
+        <span class="position-label" id="position-label">팀 남음</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
       <p class="eta" id="eta-text"></p>
+      <p class="sni-note hidden" id="sni-note">예약이 확정되면 전담 PB가 준비를 마치고 안내드립니다.</p>
     </div>
     <div id="notice-banner" class="notice-banner hidden"></div>
 
@@ -154,6 +158,20 @@
         </div>
         <p class="d96-footer-caption"><a href="#" class="d96-link">Copyright</a> · 삼성증권 SNI Center 프로토타입 · 모든 데이터는 이 브라우저에만 저장됩니다.</p>
       </div>
+    </div>
+  </div>
+
+  <div id="view-pb" class="view-pb hidden">
+    <div class="pb-page">
+      <header class="pb-header">
+        <p class="pb-eyebrow">Samsung Securities · PB 업무</p>
+        <h1 class="pb-title">고객 자산 이벤트</h1>
+        <p class="pb-sub">조기상환·만기가 다가온 고객을 놓치지 않게 알려드려요. 통화 타이밍을 잡으세요.</p>
+      </header>
+
+      <div class="pb-event-list" id="pb-event-list"></div>
+
+      <p class="pb-footnote">샘플 데이터입니다 · 실제 서비스에서는 원장시스템과 연동됩니다.</p>
     </div>
   </div>
 </div>

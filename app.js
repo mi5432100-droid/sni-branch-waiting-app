@@ -8,10 +8,12 @@
   var SERVICE_INTERVAL_MS = 6000;
 
   var BRANCHES = [
-    { id: "seomyeon", name: "부산서면지점", waitingTeams: 6, avgServiceMin: 11 },
-    { id: "centum", name: "센텀지점", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "changwon", name: "창원지점", waitingTeams: 3, avgServiceMin: 10 },
-    { id: "ulsan", name: "울산지점", waitingTeams: 5, avgServiceMin: 12 }
+    { id: "seomyeon", name: "부산서면지점", type: "general", waitingTeams: 6, avgServiceMin: 11 },
+    { id: "centum", name: "센텀지점", type: "general", waitingTeams: 4, avgServiceMin: 13 },
+    { id: "changwon", name: "창원지점", type: "general", waitingTeams: 3, avgServiceMin: 10 },
+    { id: "ulsan", name: "울산지점", type: "general", waitingTeams: 5, avgServiceMin: 12 },
+    { id: "sni-gangnam", name: "SNI 강남 패밀리오피스센터", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
+    { id: "sni-yeouido", name: "SNI 여의도센터", type: "sni", waitingTeams: 1, avgServiceMin: 20 }
   ];
 
   var PURPOSES = ["신규 계좌개설", "자산관리 상담", "상품 가입/해지", "기타 상담"];
@@ -32,14 +34,18 @@
 
   var branchListEl = document.getElementById("branch-list");
   var registerBranchNameEl = document.getElementById("register-branch-name");
+  var registerTypeBadgeEl = document.getElementById("register-type-badge");
   var purposeListEl = document.getElementById("purpose-list");
   var btnConfirmRegister = document.getElementById("btn-confirm-register");
   var btnBackToBranches = document.getElementById("btn-back-to-branches");
   var btnCancelWaiting = document.getElementById("btn-cancel-waiting");
 
   var statusBranchNameEl = document.getElementById("status-branch-name");
+  var statusTypeBadgeEl = document.getElementById("status-type-badge");
   var statusPurposeEl = document.getElementById("status-purpose");
   var positionNumberEl = document.getElementById("position-number");
+  var positionLabelEl = document.getElementById("position-label");
+  var sniNoteEl = document.getElementById("sni-note");
   var progressFillEl = document.getElementById("progress-fill");
   var etaTextEl = document.getElementById("eta-text");
   var noticeBannerEl = document.getElementById("notice-banner");
@@ -89,24 +95,33 @@
   function renderBranchList() {
     branchListEl.innerHTML = "";
     BRANCHES.forEach(function (branch) {
+      var isSni = branch.type === "sni";
       var li = document.createElement("li");
-      li.className = "branch-card";
+      li.className = "branch-card" + (isSni ? " branch-card-sni" : "");
 
       var info = document.createElement("div");
       info.className = "branch-info";
+
+      if (isSni) {
+        var badge = document.createElement("span");
+        badge.className = "type-badge";
+        badge.textContent = "SNI · 예약제";
+        info.appendChild(badge);
+      }
+
       var h3 = document.createElement("h3");
       h3.textContent = branch.name;
       var p = document.createElement("p");
-      p.textContent =
-        "현재 대기 " + branch.waitingTeams + "팀 · 예상 " +
-        branch.waitingTeams * branch.avgServiceMin + "분";
+      p.textContent = isSni
+        ? "예약 접수 " + branch.waitingTeams + "건 · PB 준비 예상 " + (branch.waitingTeams * branch.avgServiceMin) + "분"
+        : "현재 대기 " + branch.waitingTeams + "팀 · 예상 " + (branch.waitingTeams * branch.avgServiceMin) + "분";
       info.appendChild(h3);
       info.appendChild(p);
 
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn-register-small";
-      btn.textContent = "대기 등록";
+      btn.textContent = isSni ? "예약 신청" : "대기 등록";
       btn.addEventListener("click", function () {
         openRegisterScreen(branch);
       });
@@ -122,6 +137,11 @@
     pendingPurpose = null;
     registerBranchNameEl.textContent = branch.name;
     btnConfirmRegister.disabled = true;
+
+    var isSni = branch.type === "sni";
+    registerTypeBadgeEl.textContent = "SNI · 예약제";
+    registerTypeBadgeEl.classList.toggle("hidden", !isSni);
+    btnConfirmRegister.textContent = isSni ? "예약 신청하기" : "대기 등록하기";
 
     purposeListEl.innerHTML = "";
     PURPOSES.forEach(function (purpose) {
@@ -157,6 +177,7 @@
     var state = {
       branchId: pendingBranch.id,
       branchName: pendingBranch.name,
+      branchType: pendingBranch.type,
       purpose: pendingPurpose,
       initialPosition: pendingBranch.waitingTeams,
       avgServiceMin: pendingBranch.avgServiceMin,
@@ -182,6 +203,12 @@
 
   function renderStatus(state) {
     var remaining = computeRemaining(state);
+    var isSni = state.branchType === "sni";
+
+    statusTypeBadgeEl.textContent = "SNI · 예약제";
+    statusTypeBadgeEl.classList.toggle("hidden", !isSni);
+    sniNoteEl.classList.toggle("hidden", !isSni);
+    positionLabelEl.textContent = isSni ? "번째 예약 순서" : "팀 남음";
 
     statusBranchNameEl.textContent = state.branchName;
     statusPurposeEl.textContent = state.purpose;
@@ -194,11 +221,13 @@
 
     var etaMin = remaining * state.avgServiceMin;
     etaTextEl.textContent = remaining === 0
-      ? "지금 창구로 입장해주세요."
-      : "예상 대기시간 약 " + etaMin + "분";
+      ? (isSni ? "지금 창구로 입장해주세요." : "지금 창구로 입장해주세요.")
+      : (isSni ? "PB 준비까지 약 " + etaMin + "분 예상" : "예상 대기시간 약 " + etaMin + "분");
 
     if (remaining === 0) {
-      noticeBannerEl.textContent = "입장하실 차례입니다! 창구로 와주세요.";
+      noticeBannerEl.textContent = isSni
+        ? "예약이 확정되었습니다! 창구로 와주세요."
+        : "입장하실 차례입니다! 창구로 와주세요.";
       noticeBannerEl.classList.remove("hidden");
       noticeBannerEl.classList.add("ready");
       if (!state.notifiedReady) {
@@ -208,7 +237,9 @@
       }
       stopStatusTimer();
     } else if (remaining <= 1) {
-      noticeBannerEl.textContent = "곧 입장하십니다. 지점으로 이동해주세요.";
+      noticeBannerEl.textContent = isSni
+        ? "곧 예약이 확정됩니다. 지점으로 이동해주세요."
+        : "곧 입장하십니다. 지점으로 이동해주세요.";
       noticeBannerEl.classList.remove("hidden", "ready");
       if (!state.notifiedSoon) {
         notifyUser("곧 입장하세요", state.branchName + " 대기가 얼마 남지 않았습니다.");
@@ -367,25 +398,173 @@
 
   var tabWaiting = document.getElementById("tab-waiting");
   var tabDashboard = document.getElementById("tab-dashboard");
+  var tabPb = document.getElementById("tab-pb");
   var viewWaiting = document.getElementById("view-waiting");
   var viewDashboard = document.getElementById("view-dashboard");
+  var viewPb = document.getElementById("view-pb");
+
+  var MODE_TABS = [
+    { mode: "waiting", tab: tabWaiting, view: viewWaiting },
+    { mode: "dashboard", tab: tabDashboard, view: viewDashboard },
+    { mode: "pb", tab: tabPb, view: viewPb }
+  ];
 
   function switchMode(mode) {
-    var toWaiting = mode === "waiting";
-    viewWaiting.classList.toggle("hidden", !toWaiting);
-    viewDashboard.classList.toggle("hidden", toWaiting);
-    tabWaiting.classList.toggle("active", toWaiting);
-    tabDashboard.classList.toggle("active", !toWaiting);
+    MODE_TABS.forEach(function (m) {
+      var active = m.mode === mode;
+      m.view.classList.toggle("hidden", !active);
+      m.tab.classList.toggle("active", active);
+    });
+    if (mode === "pb") renderPbEvents();
   }
 
   tabWaiting.addEventListener("click", function () { switchMode("waiting"); });
   tabDashboard.addEventListener("click", function () { switchMode("dashboard"); });
+  tabPb.addEventListener("click", function () { switchMode("pb"); });
 
   function formatDate(d) {
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, "0");
     var day = String(d.getDate()).padStart(2, "0");
     return y + "-" + m + "-" + day;
+  }
+
+  // ===================================================================
+  // PB 업무 — 고객 자산 만기·조기상환 이벤트 (샘플 데이터)
+  // ===================================================================
+
+  var PB_RESOLVED_KEY = "pb_events_resolved";
+
+  var PB_EVENTS = [
+    {
+      id: "evt-1",
+      customer: "박서연",
+      product: "ELS 26-042호",
+      status: "예상",
+      detail: "조기상환평가일 D-7 · 기초자산이 배리어(85%) 대비 +3.2%p 여유",
+      draft: null
+    },
+    {
+      id: "evt-2",
+      customer: "김하늘",
+      product: "ELS 25-101호",
+      status: "확정",
+      detail: "조기상환 확정 · 상환금액 약 2,800만원 · 입금예정 2026-08-18",
+      draft: "안녕하세요 김하늘 고객님, 삼성증권 김민준입니다.\n\n보유하신 ELS 25-101호가 조기상환 조건을 충족해 약 2,800만원이 8월 18일 입금될 예정입니다.\n\n편하신 시간에 연락 주시면 재투자 방안을 상세히 안내드리겠습니다."
+    },
+    {
+      id: "evt-3",
+      customer: "이수진",
+      product: "정기예금",
+      status: "확정",
+      detail: "만기 D-7 · 만기일 2026-08-20 · 만기금액 약 5,000만원",
+      draft: "안녕하세요 이수진 고객님, 삼성증권 김민준입니다.\n\n보유하신 정기예금이 8월 20일 만기 도래하며 만기금액은 약 5,000만원입니다.\n\n편하신 시간에 연락 주시면 재예치·재투자 방안을 안내드리겠습니다."
+    },
+    {
+      id: "evt-4",
+      customer: "정우진",
+      product: "ELS 25-077호",
+      status: "이월",
+      detail: "이번 평가일 조건 미충족 · 다음 평가일 2026-11-15로 이월 · 배리어(75%) 대비 -4.1%p 부족",
+      draft: null
+    }
+  ];
+
+  var pbEventListEl = document.getElementById("pb-event-list");
+
+  function loadResolvedEvents() {
+    var raw = localStorage.getItem(PB_RESOLVED_KEY);
+    if (!raw) return [];
+    try {
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function markEventResolved(id) {
+    var resolved = loadResolvedEvents();
+    if (resolved.indexOf(id) === -1) resolved.push(id);
+    localStorage.setItem(PB_RESOLVED_KEY, JSON.stringify(resolved));
+  }
+
+  var STATUS_CLASS = { "예상": "pb-status-expected", "확정": "pb-status-confirmed", "이월": "pb-status-rolled" };
+
+  function renderPbEvents() {
+    var resolved = loadResolvedEvents();
+    pbEventListEl.innerHTML = "";
+
+    PB_EVENTS.forEach(function (evt) {
+      var isResolved = resolved.indexOf(evt.id) !== -1;
+
+      var card = document.createElement("div");
+      card.className = "pb-event-card" + (isResolved ? " pb-event-resolved" : "");
+
+      var head = document.createElement("div");
+      head.className = "pb-event-head";
+      var status = document.createElement("span");
+      status.className = "pb-event-status " + (STATUS_CLASS[evt.status] || "");
+      status.textContent = evt.status;
+      var customer = document.createElement("span");
+      customer.className = "pb-event-customer";
+      customer.textContent = evt.customer + " 고객";
+      head.appendChild(status);
+      head.appendChild(customer);
+      if (isResolved) {
+        var doneTag = document.createElement("span");
+        doneTag.className = "pb-event-done-tag";
+        doneTag.textContent = "처리완료";
+        head.appendChild(doneTag);
+      }
+
+      var product = document.createElement("p");
+      product.className = "pb-event-product";
+      product.textContent = evt.product;
+
+      var detail = document.createElement("p");
+      detail.className = "pb-event-detail";
+      detail.textContent = evt.detail;
+
+      card.appendChild(head);
+      card.appendChild(product);
+      card.appendChild(detail);
+
+      if (evt.draft) {
+        var draftBox = document.createElement("pre");
+        draftBox.className = "pb-draft-box hidden";
+        draftBox.textContent = evt.draft;
+
+        var actions = document.createElement("div");
+        actions.className = "pb-event-actions";
+
+        var toggleBtn = document.createElement("button");
+        toggleBtn.type = "button";
+        toggleBtn.className = "btn-outline";
+        toggleBtn.textContent = "제안 초안 보기";
+        toggleBtn.addEventListener("click", function () {
+          draftBox.classList.toggle("hidden");
+          toggleBtn.textContent = draftBox.classList.contains("hidden") ? "제안 초안 보기" : "초안 닫기";
+        });
+
+        var resolveBtn = document.createElement("button");
+        resolveBtn.type = "button";
+        resolveBtn.className = "btn-primary pb-resolve-btn";
+        resolveBtn.textContent = isResolved ? "처리완료" : "전화 완료 · 처리완료로 표시";
+        resolveBtn.disabled = isResolved;
+        resolveBtn.addEventListener("click", function () {
+          markEventResolved(evt.id);
+          renderPbEvents();
+        });
+
+        actions.appendChild(toggleBtn);
+        actions.appendChild(resolveBtn);
+        card.appendChild(actions);
+        card.appendChild(draftBox);
+      }
+
+      pbEventListEl.appendChild(card);
+    });
   }
 
   // ---- 투자자 성향 ----
