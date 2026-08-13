@@ -700,7 +700,16 @@
     pbLoginScreenEl.classList.remove("hidden");
   }
 
+  // TEMP: Supabase Auth 계정을 아직 안 만들어서 실제 로그인 검증 없이
+  // 이메일만 입력하면 통과시킨다. PB 계정을 만들고 나면 아래를 실제
+  // sb.auth.signInWithPassword(...) 검증으로 되돌려야 한다.
+  var PB_BYPASS_KEY = "wm_pb_bypass_authed";
+
   function refreshPbAuthUI() {
+    if (sessionStorage.getItem(PB_BYPASS_KEY) === "1") {
+      showPbContent();
+      return;
+    }
     sb.auth.getSession().then(function (res) {
       if (res.data && res.data.session) {
         showPbContent();
@@ -712,25 +721,14 @@
 
   pbLoginFormEl.addEventListener("submit", function (e) {
     e.preventDefault();
-    btnPbLogin.disabled = true;
-    pbLoginErrorEl.classList.add("hidden");
-
-    sb.auth.signInWithPassword({
-      email: pbLoginEmailEl.value.trim(),
-      password: pbLoginPasswordEl.value
-    }).then(function (res) {
-      btnPbLogin.disabled = false;
-      if (res.error) {
-        pbLoginErrorEl.textContent = "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.";
-        pbLoginErrorEl.classList.remove("hidden");
-        return;
-      }
-      pbLoginPasswordEl.value = "";
-      showPbContent();
-    });
+    if (!pbLoginEmailEl.value.trim()) return;
+    sessionStorage.setItem(PB_BYPASS_KEY, "1");
+    pbLoginPasswordEl.value = "";
+    showPbContent();
   });
 
   btnPbLogout.addEventListener("click", function () {
+    sessionStorage.removeItem(PB_BYPASS_KEY);
     sb.auth.signOut().then(function () { showPbLogin(); });
   });
 
