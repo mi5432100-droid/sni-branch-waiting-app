@@ -33,7 +33,14 @@
     </div>
   </header>
 
-  <main id="screen-branches" class="screen">
+  <main id="screen-regions" class="screen">
+    <p class="screen-desc">지역을 선택해주세요.</p>
+    <ul id="region-list" class="region-list"></ul>
+  </main>
+
+  <main id="screen-branches" class="screen hidden">
+    <button type="button" class="btn-back" id="btn-back-to-regions">&larr; 지역 선택으로</button>
+    <h2 id="branches-region-name"></h2>
     <p class="screen-desc">지점을 선택하고 미리 대기를 등록하세요.</p>
     <ul id="branch-list" class="branch-list"></ul>
   </main>

@@ -129,6 +129,38 @@ body {
   line-height: 1.6;
 }
 
+.region-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.region-card {
+  background: linear-gradient(155deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 20px 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.region-card h3 {
+  margin: 0 0 4px;
+  font-size: 14.5px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.region-card p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+
 .branch-list {
   list-style: none;
   margin: 0;

@@ -7,13 +7,37 @@
   // 예상 시간(분)은 압축 속도가 아니라 avgServiceMin 기준 실제 값을 사용한다.
   var SERVICE_INTERVAL_MS = 6000;
 
+  var REGIONS = [
+    { id: "seoul", name: "서울" },
+    { id: "gyeonggi", name: "경기·인천" },
+    { id: "gangwon", name: "강원" },
+    { id: "daejeon", name: "대전·충청" },
+    { id: "daegu", name: "대구·경북" },
+    { id: "busan", name: "부산·울산·경남" },
+    { id: "gwangju", name: "광주·전라" },
+    { id: "jeju", name: "제주" }
+  ];
+
   var BRANCHES = [
-    { id: "seomyeon", name: "부산서면지점", type: "general", waitingTeams: 6, avgServiceMin: 11 },
-    { id: "centum", name: "센텀지점", type: "general", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "changwon", name: "창원지점", type: "general", waitingTeams: 3, avgServiceMin: 10 },
-    { id: "ulsan", name: "울산지점", type: "general", waitingTeams: 5, avgServiceMin: 12 },
-    { id: "sni-gangnam", name: "SNI 강남 패밀리오피스센터", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
-    { id: "sni-yeouido", name: "SNI 여의도센터", type: "sni", waitingTeams: 1, avgServiceMin: 20 }
+    { id: "jongno", name: "종로지점", region: "seoul", type: "general", waitingTeams: 4, avgServiceMin: 12 },
+    { id: "jamsil", name: "잠실지점", region: "seoul", type: "general", waitingTeams: 5, avgServiceMin: 11 },
+    { id: "sni-gangnam", name: "SNI 강남 패밀리오피스센터", region: "seoul", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
+    { id: "sni-yeouido", name: "SNI 여의도센터", region: "seoul", type: "sni", waitingTeams: 1, avgServiceMin: 20 },
+    { id: "bundang", name: "분당지점", region: "gyeonggi", type: "general", waitingTeams: 3, avgServiceMin: 12 },
+    { id: "incheon", name: "인천지점", region: "gyeonggi", type: "general", waitingTeams: 4, avgServiceMin: 10 },
+    { id: "gangneung", name: "강릉지점", region: "gangwon", type: "general", waitingTeams: 2, avgServiceMin: 11 },
+    { id: "wonju", name: "원주지점", region: "gangwon", type: "general", waitingTeams: 2, avgServiceMin: 10 },
+    { id: "daejeon-branch", name: "대전지점", region: "daejeon", type: "general", waitingTeams: 3, avgServiceMin: 11 },
+    { id: "cheongju", name: "청주지점", region: "daejeon", type: "general", waitingTeams: 2, avgServiceMin: 10 },
+    { id: "daegu-branch", name: "대구지점", region: "daegu", type: "general", waitingTeams: 4, avgServiceMin: 12 },
+    { id: "pohang", name: "포항지점", region: "daegu", type: "general", waitingTeams: 2, avgServiceMin: 10 },
+    { id: "seomyeon", name: "부산서면지점", region: "busan", type: "general", waitingTeams: 6, avgServiceMin: 11 },
+    { id: "centum", name: "센텀지점", region: "busan", type: "general", waitingTeams: 4, avgServiceMin: 13 },
+    { id: "changwon", name: "창원지점", region: "busan", type: "general", waitingTeams: 3, avgServiceMin: 10 },
+    { id: "ulsan", name: "울산지점", region: "busan", type: "general", waitingTeams: 5, avgServiceMin: 12 },
+    { id: "gwangju-branch", name: "광주지점", region: "gwangju", type: "general", waitingTeams: 3, avgServiceMin: 11 },
+    { id: "jeonju", name: "전주지점", region: "gwangju", type: "general", waitingTeams: 2, avgServiceMin: 10 },
+    { id: "jeju-branch", name: "제주지점", region: "jeju", type: "general", waitingTeams: 2, avgServiceMin: 12 }
   ];
 
   var PURPOSES = ["신규 계좌개설", "자산관리 상담", "상품 가입/해지", "기타 상담"];
@@ -26,12 +50,16 @@
   };
 
   var screens = {
+    regions: document.getElementById("screen-regions"),
     branches: document.getElementById("screen-branches"),
     register: document.getElementById("screen-register"),
     status: document.getElementById("screen-status"),
     prep: document.getElementById("screen-prep")
   };
 
+  var regionListEl = document.getElementById("region-list");
+  var branchesRegionNameEl = document.getElementById("branches-region-name");
+  var btnBackToRegions = document.getElementById("btn-back-to-regions");
   var branchListEl = document.getElementById("branch-list");
   var registerBranchNameEl = document.getElementById("register-branch-name");
   var registerTypeBadgeEl = document.getElementById("register-type-badge");
@@ -62,11 +90,40 @@
   var pendingBranch = null;
   var pendingPurpose = null;
   var statusTimer = null;
+  var currentRegion = null;
 
   function showScreen(name) {
     Object.keys(screens).forEach(function (key) {
       screens[key].classList.toggle("hidden", key !== name);
     });
+  }
+
+  function renderRegionList() {
+    regionListEl.innerHTML = "";
+    REGIONS.forEach(function (region) {
+      var count = BRANCHES.filter(function (b) { return b.region === region.id; }).length;
+      var li = document.createElement("li");
+      li.className = "region-card";
+
+      var h3 = document.createElement("h3");
+      h3.textContent = region.name;
+      var p = document.createElement("p");
+      p.textContent = count + "개 지점";
+
+      li.appendChild(h3);
+      li.appendChild(p);
+      li.addEventListener("click", function () {
+        openBranchesForRegion(region);
+      });
+      regionListEl.appendChild(li);
+    });
+  }
+
+  function openBranchesForRegion(region) {
+    currentRegion = region.id;
+    branchesRegionNameEl.textContent = region.name;
+    renderBranchList();
+    showScreen("branches");
   }
 
   function loadState() {
@@ -94,7 +151,9 @@
 
   function renderBranchList() {
     branchListEl.innerHTML = "";
-    BRANCHES.forEach(function (branch) {
+    BRANCHES.filter(function (branch) {
+      return branch.region === currentRegion;
+    }).forEach(function (branch) {
       var isSni = branch.type === "sni";
       var li = document.createElement("li");
       li.className = "branch-card" + (isSni ? " branch-card-sni" : "");
@@ -178,6 +237,7 @@
       branchId: pendingBranch.id,
       branchName: pendingBranch.name,
       branchType: pendingBranch.type,
+      branchRegion: pendingBranch.region,
       purpose: pendingPurpose,
       initialPosition: pendingBranch.waitingTeams,
       avgServiceMin: pendingBranch.avgServiceMin,
@@ -372,12 +432,20 @@
   function cancelWaiting() {
     clearState();
     stopStatusTimer();
-    showScreen("branches");
+    var region = REGIONS.filter(function (r) { return r.id === currentRegion; })[0];
+    if (region) {
+      openBranchesForRegion(region);
+    } else {
+      showScreen("regions");
+    }
   }
 
   btnConfirmRegister.addEventListener("click", confirmRegister);
   btnBackToBranches.addEventListener("click", function () {
     showScreen("branches");
+  });
+  btnBackToRegions.addEventListener("click", function () {
+    showScreen("regions");
   });
   btnCancelWaiting.addEventListener("click", cancelWaiting);
   btnGoPrep.addEventListener("click", openPrepScreen);
@@ -734,12 +802,13 @@
   }
 
   function init() {
-    renderBranchList();
+    renderRegionList();
     var existing = loadState();
     if (existing) {
+      currentRegion = existing.branchRegion || null;
       showStatusScreen(existing);
     } else {
-      showScreen("branches");
+      showScreen("regions");
     }
     initDashboard();
   }
