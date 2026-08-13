@@ -23,34 +23,101 @@
     { id: "jeju", name: "제주" }
   ];
 
+  // waitingTeams(샘플 고정값)는 실시간 대기열 연동 후 제거했다 — 현재 대기 인원은
+  // Supabase의 waiting_entries 테이블에서 실시간으로 세어서 보여준다.
   var BRANCHES = [
-    { id: "st-town", name: "삼성타운금융센터", region: "seoul", type: "general", waitingTeams: 5, avgServiceMin: 12 },
-    { id: "apgujeong-wm", name: "압구정WM", region: "seoul", type: "general", waitingTeams: 4, avgServiceMin: 15 },
-    { id: "dogok-wm", name: "도곡WM", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 14 },
-    { id: "banpo-wm", name: "반포 퍼스티지WM", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 14 },
-    { id: "jamsil-wm", name: "잠실WM", region: "seoul", type: "general", waitingTeams: 5, avgServiceMin: 12 },
-    { id: "mokdong-wm", name: "목동WM", region: "seoul", type: "general", waitingTeams: 4, avgServiceMin: 12 },
-    { id: "gangbuk-fc", name: "강북금융센터", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "parnas", name: "강남파르나스지점", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 13 },
-    { id: "sni-family-office", name: "SNI 패밀리오피스센터", region: "seoul", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
-    { id: "pyeongchon-wm", name: "평촌WM", region: "gyeonggi-incheon", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "pangyo-fc", name: "판교금융센터", region: "gyeonggi-incheon", type: "general", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "suwon-wm", name: "수원WM", region: "gyeonggi-incheon", type: "general", waitingTeams: 3, avgServiceMin: 12 },
-    { id: "songdo-wm", name: "송도WM", region: "gyeonggi-incheon", type: "general", waitingTeams: 3, avgServiceMin: 12 },
-    { id: "gangneung", name: "강릉지점", region: "gangwon", type: "general", waitingTeams: 2, avgServiceMin: 11 },
-    { id: "daejeon-branch", name: "대전지점", region: "daejeon-chungbuk-chungnam", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "cheongju", name: "청주지점", region: "daejeon-chungbuk-chungnam", type: "general", waitingTeams: 2, avgServiceMin: 10 },
-    { id: "cheonan", name: "천안지점", region: "daejeon-chungbuk-chungnam", type: "general", waitingTeams: 2, avgServiceMin: 10 },
-    { id: "daegu-wm", name: "대구WM", region: "daegu-gyeongbuk", type: "general", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "pohang-wm", name: "포항WM", region: "daegu-gyeongbuk", type: "general", waitingTeams: 2, avgServiceMin: 12 },
-    { id: "gwangju-branch", name: "광주지점", region: "gwangju-jeonnam-jeonbuk", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "jeonju", name: "전주지점", region: "gwangju-jeonnam-jeonbuk", type: "general", waitingTeams: 2, avgServiceMin: 10 },
-    { id: "busan-wm", name: "부산WM", region: "busan-ulsan-gyeongnam", type: "general", waitingTeams: 6, avgServiceMin: 11 },
-    { id: "haeundae-centum-wm", name: "해운대센텀WM", region: "busan-ulsan-gyeongnam", type: "general", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "ulsan", name: "울산지점", region: "busan-ulsan-gyeongnam", type: "general", waitingTeams: 5, avgServiceMin: 12 },
-    { id: "changwon", name: "창원지점", region: "busan-ulsan-gyeongnam", type: "general", waitingTeams: 3, avgServiceMin: 10 },
-    { id: "jeju-wm", name: "제주WM", region: "jeju", type: "general", waitingTeams: 2, avgServiceMin: 12 }
+    { id: "st-town", name: "삼성타운금융센터", region: "seoul", type: "general", avgServiceMin: 12 },
+    { id: "apgujeong-wm", name: "압구정WM", region: "seoul", type: "general", avgServiceMin: 15 },
+    { id: "dogok-wm", name: "도곡WM", region: "seoul", type: "general", avgServiceMin: 14 },
+    { id: "banpo-wm", name: "반포 퍼스티지WM", region: "seoul", type: "general", avgServiceMin: 14 },
+    { id: "jamsil-wm", name: "잠실WM", region: "seoul", type: "general", avgServiceMin: 12 },
+    { id: "mokdong-wm", name: "목동WM", region: "seoul", type: "general", avgServiceMin: 12 },
+    { id: "gangbuk-fc", name: "강북금융센터", region: "seoul", type: "general", avgServiceMin: 11 },
+    { id: "parnas", name: "강남파르나스지점", region: "seoul", type: "general", avgServiceMin: 13 },
+    { id: "sni-family-office", name: "SNI 패밀리오피스센터", region: "seoul", type: "sni", avgServiceMin: 25 },
+    { id: "pyeongchon-wm", name: "평촌WM", region: "gyeonggi-incheon", type: "general", avgServiceMin: 11 },
+    { id: "pangyo-fc", name: "판교금융센터", region: "gyeonggi-incheon", type: "general", avgServiceMin: 13 },
+    { id: "suwon-wm", name: "수원WM", region: "gyeonggi-incheon", type: "general", avgServiceMin: 12 },
+    { id: "songdo-wm", name: "송도WM", region: "gyeonggi-incheon", type: "general", avgServiceMin: 12 },
+    { id: "gangneung", name: "강릉지점", region: "gangwon", type: "general", avgServiceMin: 11 },
+    { id: "daejeon-branch", name: "대전지점", region: "daejeon-chungbuk-chungnam", type: "general", avgServiceMin: 11 },
+    { id: "cheongju", name: "청주지점", region: "daejeon-chungbuk-chungnam", type: "general", avgServiceMin: 10 },
+    { id: "cheonan", name: "천안지점", region: "daejeon-chungbuk-chungnam", type: "general", avgServiceMin: 10 },
+    { id: "daegu-wm", name: "대구WM", region: "daegu-gyeongbuk", type: "general", avgServiceMin: 13 },
+    { id: "pohang-wm", name: "포항WM", region: "daegu-gyeongbuk", type: "general", avgServiceMin: 12 },
+    { id: "gwangju-branch", name: "광주지점", region: "gwangju-jeonnam-jeonbuk", type: "general", avgServiceMin: 11 },
+    { id: "jeonju", name: "전주지점", region: "gwangju-jeonnam-jeonbuk", type: "general", avgServiceMin: 10 },
+    { id: "busan-wm", name: "부산WM", region: "busan-ulsan-gyeongnam", type: "general", avgServiceMin: 11 },
+    { id: "haeundae-centum-wm", name: "해운대센텀WM", region: "busan-ulsan-gyeongnam", type: "general", avgServiceMin: 13 },
+    { id: "ulsan", name: "울산지점", region: "busan-ulsan-gyeongnam", type: "general", avgServiceMin: 12 },
+    { id: "changwon", name: "창원지점", region: "busan-ulsan-gyeongnam", type: "general", avgServiceMin: 10 },
+    { id: "jeju-wm", name: "제주WM", region: "jeju", type: "general", avgServiceMin: 12 }
   ];
+
+  var SUPABASE_URL = "https://yeqsiohpontbridkbjnw.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcXNpb2hwb250YnJpZGtiam53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MDE2NjksImV4cCI6MjEwMjA3NzY2OX0.WI44QQlFiyg384_UM6rMd1fOAbXdWtaLIZ3lUGoa_uA";
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // status === "waiting" 인 행만 들고 있는 실시간 캐시. Realtime 구독으로 최신 상태를 유지한다.
+  var waitingEntries = [];
+
+  function entriesForBranch(branchId) {
+    return waitingEntries
+      .filter(function (e) { return e.branch_id === branchId; })
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+  }
+
+  function upsertWaitingEntry(row) {
+    var idx = waitingEntries.findIndex(function (e) { return e.id === row.id; });
+    if (row.status === "waiting") {
+      if (idx === -1) waitingEntries.push(row); else waitingEntries[idx] = row;
+    } else if (idx !== -1) {
+      waitingEntries.splice(idx, 1);
+    }
+  }
+
+  function removeWaitingEntry(id) {
+    var idx = waitingEntries.findIndex(function (e) { return e.id === id; });
+    if (idx !== -1) waitingEntries.splice(idx, 1);
+  }
+
+  function onWaitingEntriesChanged() {
+    if (!screens.branches.classList.contains("hidden")) renderBranchList();
+    if (!screens.status.classList.contains("hidden")) {
+      var state = loadState();
+      if (state) renderStatus(state);
+    }
+  }
+
+  function subscribeRealtime() {
+    sb.channel("waiting_entries_changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "waiting_entries" }, function (payload) {
+        if (payload.eventType === "DELETE") {
+          removeWaitingEntry(payload.old.id);
+        } else {
+          upsertWaitingEntry(payload.new);
+        }
+        onWaitingEntriesChanged();
+      })
+      .subscribe();
+  }
+
+  // 데모 진행 속도: 실제 avgServiceMin(분) 대신 짧은 간격으로 각 지점의 맨 앞 대기를
+  // 하나씩 처리 완료시켜, 새로고침 없이도 대기 흐름을 눈으로 확인할 수 있게 압축했다.
+  // 여러 기기에서 동시에 열려 있어도 같은 행을 한 번만 처리하도록 status="waiting"
+  // 조건을 걸어 갱신해서, 먼저 도착한 요청만 반영되고 나머지는 조용히 무시된다.
+  function advanceQueues() {
+    var branchIds = waitingEntries
+      .map(function (e) { return e.branch_id; })
+      .filter(function (id, i, arr) { return arr.indexOf(id) === i; });
+    branchIds.forEach(function (branchId) {
+      var list = entriesForBranch(branchId);
+      if (list.length === 0) return;
+      var oldest = list[0];
+      sb.from("waiting_entries").update({ status: "done" }).match({ id: oldest.id, status: "waiting" })
+        .then(function () {});
+    });
+  }
 
   var PURPOSES = ["신규 계좌개설", "자산관리 상담", "상품 가입/해지", "기타 상담"];
 
@@ -180,12 +247,13 @@
         info.appendChild(badge);
       }
 
+      var count = entriesForBranch(branch.id).length;
       var h3 = document.createElement("h3");
       h3.textContent = branch.name;
       var p = document.createElement("p");
       p.textContent = isSni
-        ? "예약 접수 " + branch.waitingTeams + "건 · PB 준비 예상 " + (branch.waitingTeams * branch.avgServiceMin) + "분"
-        : "현재 대기 " + branch.waitingTeams + "팀 · 예상 " + (branch.waitingTeams * branch.avgServiceMin) + "분";
+        ? "예약 접수 " + count + "건 · PB 준비 예상 " + (count * branch.avgServiceMin) + "분"
+        : "현재 대기 " + count + "팀 · 예상 " + (count * branch.avgServiceMin) + "분";
       info.appendChild(h3);
       info.appendChild(p);
 
@@ -244,33 +312,57 @@
   function confirmRegister() {
     if (!pendingBranch || !pendingPurpose) return;
     requestNotificationPermission();
+    btnConfirmRegister.disabled = true;
 
-    var state = {
-      branchId: pendingBranch.id,
-      branchName: pendingBranch.name,
-      branchType: pendingBranch.type,
-      branchRegion: pendingBranch.region,
-      purpose: pendingPurpose,
-      initialPosition: pendingBranch.waitingTeams,
-      avgServiceMin: pendingBranch.avgServiceMin,
-      registeredAt: Date.now(),
-      notifiedReady: false,
-      notifiedSoon: false,
-      prep: {
-        checkedDocs: [],
-        memo: "",
-        identityVerified: false,
-        completed: false
+    var branch = pendingBranch;
+    var purpose = pendingPurpose;
+
+    sb.from("waiting_entries").insert({
+      branch_id: branch.id,
+      branch_name: branch.name,
+      branch_type: branch.type,
+      purpose: purpose,
+      avg_service_min: branch.avgServiceMin,
+      status: "waiting"
+    }).select().single().then(function (res) {
+      if (res.error || !res.data) {
+        btnConfirmRegister.disabled = false;
+        window.alert("등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        return;
       }
-    };
-    saveState(state);
-    showStatusScreen(state);
+      var row = res.data;
+      upsertWaitingEntry(row);
+
+      var state = {
+        entryId: row.id,
+        branchId: branch.id,
+        branchName: branch.name,
+        branchType: branch.type,
+        branchRegion: branch.region,
+        purpose: purpose,
+        avgServiceMin: branch.avgServiceMin,
+        initialAhead: entriesForBranch(branch.id).filter(function (e) { return e.id !== row.id; }).length,
+        registeredAt: new Date(row.created_at).getTime(),
+        notifiedReady: false,
+        notifiedSoon: false,
+        prep: {
+          checkedDocs: [],
+          memo: "",
+          identityVerified: false,
+          completed: false
+        }
+      };
+      saveState(state);
+      showStatusScreen(state);
+    });
   }
 
   function computeRemaining(state) {
-    var elapsedMs = Date.now() - state.registeredAt;
-    var served = Math.floor(elapsedMs / SERVICE_INTERVAL_MS);
-    return Math.max(0, state.initialPosition - served);
+    var mine = waitingEntries.filter(function (e) { return e.id === state.entryId; })[0];
+    if (!mine) return 0;
+    return waitingEntries.filter(function (e) {
+      return e.branch_id === state.branchId && new Date(e.created_at) < new Date(mine.created_at);
+    }).length;
   }
 
   function renderStatus(state) {
@@ -286,9 +378,9 @@
     statusPurposeEl.textContent = state.purpose;
     positionNumberEl.textContent = remaining;
 
-    var progressPct = state.initialPosition === 0
+    var progressPct = state.initialAhead === 0
       ? 100
-      : Math.min(100, ((state.initialPosition - remaining) / state.initialPosition) * 100);
+      : Math.min(100, ((state.initialAhead - remaining) / state.initialAhead) * 100);
     progressFillEl.style.width = progressPct + "%";
 
     var etaMin = remaining * state.avgServiceMin;
@@ -442,6 +534,11 @@
   }
 
   function cancelWaiting() {
+    var state = loadState();
+    if (state && state.entryId) {
+      removeWaitingEntry(state.entryId);
+      sb.from("waiting_entries").update({ status: "cancelled" }).eq("id", state.entryId).then(function () {});
+    }
     clearState();
     stopStatusTimer();
     var region = REGIONS.filter(function (r) { return r.id === currentRegion; })[0];
@@ -815,14 +912,21 @@
 
   function init() {
     renderRegionList();
-    var existing = loadState();
-    if (existing) {
-      currentRegion = existing.branchRegion || null;
-      showStatusScreen(existing);
-    } else {
-      showScreen("regions");
-    }
     initDashboard();
+    subscribeRealtime();
+    setInterval(advanceQueues, SERVICE_INTERVAL_MS);
+
+    sb.from("waiting_entries").select("*").eq("status", "waiting").then(function (res) {
+      if (res.data) waitingEntries = res.data;
+
+      var existing = loadState();
+      if (existing) {
+        currentRegion = existing.branchRegion || null;
+        showStatusScreen(existing);
+      } else {
+        showScreen("regions");
+      }
+    });
   }
 
   init();
