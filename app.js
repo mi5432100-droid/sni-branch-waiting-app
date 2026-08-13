@@ -7,10 +7,11 @@
   // 예상 시간(분)은 압축 속도가 아니라 avgServiceMin 기준 실제 값을 사용한다.
   var SERVICE_INTERVAL_MS = 6000;
 
-  // 지역 구분과 지점명은 삼성증권 공식 지점찾기의 지역 카테고리(전체/서울/경기/인천/강원/
-  // 충남/충북/대전/경북/대구/전북/광주/경남/울산/부산/전남/제주)를 기준으로 구성했다.
-  // 지점명 중 WM/금융센터가 붙은 이름은 공개된 자료로 확인된 실제 지점명이며,
-  // 나머지 일반 지점명은 프로토타입용으로 지역당 최소 1개 이상 채운 것이다.
+  // 지역 구분과 지점명은 삼성증권 공식 지점찾기의 지역 카테고리를 기준으로 구성했다.
+  // 광주·전남은 실제로 지점이 광주에만 있고 전남 별도 지점이 없어 하나로 합쳤다.
+  // WM/금융센터/SNI 패밀리오피스센터가 붙은 이름은 뉴스·블로그 등 공개 자료로 확인된
+  // 실제 지점명이며(예: SNI 패밀리오피스센터=강남파이낸스센터, 수원WM·판교금융센터·평촌WM=경기),
+  // 나머지 일반 지점명은 공식 목록을 그대로 가져올 수 없어 지역당 최소 1개로 채운 것이다.
   var REGIONS = [
     { id: "seoul", name: "서울" },
     { id: "gyeonggi", name: "경기" },
@@ -22,11 +23,10 @@
     { id: "gyeongbuk", name: "경북" },
     { id: "daegu", name: "대구" },
     { id: "jeonbuk", name: "전북" },
-    { id: "gwangju", name: "광주" },
+    { id: "gwangju", name: "광주·전남" },
     { id: "gyeongnam", name: "경남" },
     { id: "ulsan", name: "울산" },
     { id: "busan", name: "부산" },
-    { id: "jeonnam", name: "전남" },
     { id: "jeju", name: "제주" }
   ];
 
@@ -38,10 +38,10 @@
     { id: "jamsil-wm", name: "잠실WM", region: "seoul", type: "general", waitingTeams: 5, avgServiceMin: 12 },
     { id: "mokdong-wm", name: "목동WM", region: "seoul", type: "general", waitingTeams: 4, avgServiceMin: 12 },
     { id: "gangbuk-fc", name: "강북금융센터", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "sni-gangnam", name: "SNI 강남 패밀리오피스센터", region: "seoul", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
-    { id: "sni-yeouido", name: "SNI 여의도센터", region: "seoul", type: "sni", waitingTeams: 1, avgServiceMin: 20 },
-    { id: "anyang", name: "안양지점", region: "gyeonggi", type: "general", waitingTeams: 3, avgServiceMin: 11 },
-    { id: "bundang-wm", name: "분당WM", region: "gyeonggi", type: "general", waitingTeams: 4, avgServiceMin: 13 },
+    { id: "parnas", name: "강남파르나스지점", region: "seoul", type: "general", waitingTeams: 3, avgServiceMin: 13 },
+    { id: "sni-family-office", name: "SNI 패밀리오피스센터", region: "seoul", type: "sni", waitingTeams: 2, avgServiceMin: 25 },
+    { id: "pyeongchon-wm", name: "평촌WM", region: "gyeonggi", type: "general", waitingTeams: 3, avgServiceMin: 11 },
+    { id: "pangyo-fc", name: "판교금융센터", region: "gyeonggi", type: "general", waitingTeams: 4, avgServiceMin: 13 },
     { id: "suwon-wm", name: "수원WM", region: "gyeonggi", type: "general", waitingTeams: 3, avgServiceMin: 12 },
     { id: "songdo-wm", name: "송도WM", region: "incheon", type: "general", waitingTeams: 3, avgServiceMin: 12 },
     { id: "gangneung", name: "강릉지점", region: "gangwon", type: "general", waitingTeams: 2, avgServiceMin: 11 },
@@ -56,7 +56,6 @@
     { id: "ulsan", name: "울산지점", region: "ulsan", type: "general", waitingTeams: 5, avgServiceMin: 12 },
     { id: "busan-wm", name: "부산WM", region: "busan", type: "general", waitingTeams: 6, avgServiceMin: 11 },
     { id: "haeundae-centum-wm", name: "해운대센텀WM", region: "busan", type: "general", waitingTeams: 4, avgServiceMin: 13 },
-    { id: "yeosu", name: "여수지점", region: "jeonnam", type: "general", waitingTeams: 2, avgServiceMin: 10 },
     { id: "jeju-wm", name: "제주WM", region: "jeju", type: "general", waitingTeams: 2, avgServiceMin: 12 }
   ];
 
