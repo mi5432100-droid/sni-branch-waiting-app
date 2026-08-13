@@ -158,6 +158,7 @@
   var noticeBannerEl = document.getElementById("notice-banner");
   var prepStatusTextEl = document.getElementById("prep-status-text");
   var btnGoPrep = document.getElementById("btn-go-prep");
+  var btnGotoDashboard = document.getElementById("btn-goto-dashboard");
 
   var btnBackToStatus = document.getElementById("btn-back-to-status");
   var prepPurposeDescEl = document.getElementById("prep-purpose-desc");
@@ -558,6 +559,7 @@
   });
   btnCancelWaiting.addEventListener("click", cancelWaiting);
   btnGoPrep.addEventListener("click", openPrepScreen);
+  btnGotoDashboard.addEventListener("click", function () { switchMode("dashboard"); });
   btnBackToStatus.addEventListener("click", function () {
     saveMemo();
     var state = loadState();
@@ -593,6 +595,7 @@
       m.tab.classList.toggle("active", active);
     });
     if (mode === "pb") renderPbEvents();
+    if (mode === "dashboard") renderDashboardWaitingBanner();
   }
 
   tabWaiting.addEventListener("click", function () { switchMode("waiting"); });
@@ -777,6 +780,53 @@
     });
   });
 
+  // ---- 대기 중 배너 (대기 등록 상태와 대시보드를 연결) ----
+
+  var dashboardWaitingBannerEl = document.getElementById("dashboard-waiting-banner");
+  var dashboardWaitingTextEl = document.getElementById("dashboard-waiting-text");
+  var btnDashboardBackToStatus = document.getElementById("btn-dashboard-back-to-status");
+
+  function renderDashboardWaitingBanner() {
+    var state = loadState();
+    if (!state) {
+      dashboardWaitingBannerEl.classList.add("hidden");
+      return;
+    }
+    dashboardWaitingTextEl.textContent = state.branchName + " · " + state.purpose + " 대기 중입니다.";
+    dashboardWaitingBannerEl.classList.remove("hidden");
+  }
+
+  btnDashboardBackToStatus.addEventListener("click", function () { switchMode("waiting"); });
+
+  // ---- 상담 요청 사항 ----
+
+  var CONSULT_KEY = "d96_consult_request";
+  var consultForm = document.getElementById("consult-form");
+  var consultInput = document.getElementById("consult-input");
+  var consultStatusEl = document.getElementById("consult-status");
+
+  function loadConsultRequest() {
+    var raw = localStorage.getItem(CONSULT_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+
+  function renderConsultRequest() {
+    var saved = loadConsultRequest();
+    consultStatusEl.textContent = saved
+      ? "저장됨: " + saved.savedAt
+      : "아직 입력하지 않았습니다.";
+  }
+
+  consultForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    localStorage.setItem(CONSULT_KEY, JSON.stringify({
+      text: consultInput.value.trim(),
+      savedAt: formatDate(new Date())
+    }));
+    renderConsultRequest();
+  });
+
   // ---- 상속/증여 ----
 
   var INHERITANCE_KEY = "d96_inheritance_note";
@@ -905,8 +955,14 @@
     if (savedInheritance) {
       inheritanceInput.value = savedInheritance.text;
     }
+    var savedConsult = loadConsultRequest();
+    if (savedConsult) {
+      consultInput.value = savedConsult.text;
+    }
     renderProfile();
     renderInheritance();
+    renderConsultRequest();
+    renderDashboardWaitingBanner();
     renderAssets();
   }
 

@@ -71,6 +71,12 @@
     </div>
     <div id="notice-banner" class="notice-banner hidden"></div>
 
+    <div class="dashboard-cta">
+      <p class="dashboard-cta-title">기다리시는 동안 투자 정보를 미리 입력해보세요</p>
+      <p class="dashboard-cta-desc">투자자 성향, 보유 자산, 상담받고 싶은 내용을 적어두시면 상담이 더 빨라집니다.</p>
+      <button type="button" class="btn-outline" id="btn-goto-dashboard">투자 대시보드로 이동</button>
+    </div>
+
     <div class="prep-section">
       <p class="prep-status" id="prep-status-text">사전 준비: 미완료</p>
       <button type="button" class="btn-outline" id="btn-go-prep">상담 준비하기</button>
@@ -111,6 +117,23 @@
       </div>
 
       <p class="d96-intro">본인의 투자자 성향과 자산 구조를 직접 입력해보세요.</p>
+
+      <div class="d96-waiting-banner hidden" id="dashboard-waiting-banner">
+        <p id="dashboard-waiting-text"></p>
+        <button type="button" class="d96-btn-outline" id="btn-dashboard-back-to-status">대기 화면으로 돌아가기</button>
+      </div>
+
+      <section class="d96-ribbon d96-ribbon-full">
+        <div class="d96-ribbon-title">상담 요청 사항</div>
+        <div class="d96-ribbon-body d96-tint-dark">
+          <p class="d96-form-label">오늘 상담에서 다루고 싶은 내용을 적어주세요.</p>
+          <form id="consult-form" class="d96-asset-form">
+            <textarea id="consult-input" placeholder="예: 만기 도래한 ELS 재투자 상담 희망, 연금저축 세액공제 한도 문의 등"></textarea>
+            <button type="submit" class="d96-btn-primary">저장</button>
+          </form>
+          <p class="d96-empty" id="consult-status">아직 입력하지 않았습니다.</p>
+        </div>
+      </section>
 
       <div class="d96-panels d96-panels-2">
         <section class="d96-ribbon">
